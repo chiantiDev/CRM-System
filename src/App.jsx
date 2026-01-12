@@ -1,10 +1,10 @@
-const App = () => {
-  return (
-    <div>
-      <h1>To Do List</h1>
-      <p>There will be a list of tasks here soon</p>
-    </div>
-  )
-}
+import Todo from "./components/Todo.jsx";
 
-export default App
+const App = () => {
+
+  return (
+    <Todo />
+  );
+};
+
+export default App;
