@@ -1,7 +1,7 @@
 import {useState} from "react";
 import styles from './TaskInput.module.css'
 
-const TaskInput = () => {
+const TaskInput = (props) => {
   const [taskValue, setTaskValue] = useState('')
   const [validText, setValidText] = useState('')
   const [showValidText, setShowValidText] = useState(false)
@@ -12,10 +12,10 @@ const TaskInput = () => {
     if (taskValue.length === 0) {
       setValidText('Это поле не может быть пустым')
       setShowValidText(true)
-    } else if(taskValue.length < 2) {
+    } else if (taskValue.length < 2) {
       setValidText('Минимальная длина текста 2 символа')
       setShowValidText(true)
-    } else if(taskValue.length > 64) {
+    } else if (taskValue.length > 64) {
       setValidText('Максимальная длина текста 64 символа')
       setShowValidText(true)
     } else {
@@ -34,20 +34,22 @@ const TaskInput = () => {
         }
         return response.json();
       })
-        .then(result => console.log(result) )
+        .then(result => console.log(result))
         .catch(error => console.log(error))
         .finally(() => {
           setTaskValue('')
           setShowValidText(false)
+          props.inputUpdateTaskList()
         })
     }
   }
 
   return (
     <>
-      <form className={styles.form}  onSubmit={newTaskSubmit}>
+      <form className={styles.form} onSubmit={newTaskSubmit}>
         <div className={styles.inputWrapper}>
-          <input className={styles.input} value={taskValue} placeholder={'Task To Be Done...'} onChange={(e) => setTaskValue(e.target.value)}/>
+          <input className={styles.input} value={taskValue} placeholder={'Task To Be Done...'}
+                 onChange={(e) => setTaskValue(e.target.value)}/>
           <div className={`${styles.validText} ${showValidText ? styles.active : styles.noActive}`}>{validText}</div>
         </div>
         <button className={styles.button} type="submit">Add</button>
