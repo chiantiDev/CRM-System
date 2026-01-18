@@ -1,10 +1,9 @@
-import Todo from "./components/Todo.jsx";
-
 const App = () => {
-
   return (
-    <Todo />
-  );
-};
+    <div>
+      <h1>To Do List</h1>
+    </div>
+  )
+}
 
-export default App;
+export default App
