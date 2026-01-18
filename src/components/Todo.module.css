@@ -1,0 +1,18 @@
+.main {
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+  max-height: 87vh;
+}
+
+.todo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  width: 400px;
+  background-color: aliceblue;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
