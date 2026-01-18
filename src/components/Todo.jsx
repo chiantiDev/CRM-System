@@ -5,16 +5,18 @@ import styles from './Todo.module.css'
 
 
 const Todo = () => {
-  const [updateTaskList, setUpdateTaskList] = useState(false)
+  const [updateList, setUpdateList] = useState(false)
 
-  const inputUpdateTaskList = () => {
-    setUpdateTaskList(!updateTaskList)
+  const updateTaskList = () => {
+    setUpdateList(!updateList)
   }
 
   return (
-    <main className={styles.todo}>
-      <TaskInput inputUpdateTaskList={inputUpdateTaskList}/>
-      <TaskList updateList={updateTaskList}/>
+    <main className={styles.main}>
+      <div className={styles.todo}>
+        <TaskInput updateTaskList={updateTaskList}/>
+        <TaskList updateList={updateList} updateTaskList={updateTaskList}/>
+      </div>
     </main>
   )
 }

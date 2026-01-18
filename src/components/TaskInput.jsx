@@ -1,5 +1,6 @@
 import {useState} from "react";
-import styles from './TaskInput.module.css'
+import style from './TaskInput.module.css'
+import styleValid from "./ValidText.module.css";
 
 const TaskInput = (props) => {
   const [taskValue, setTaskValue] = useState('')
@@ -39,20 +40,21 @@ const TaskInput = (props) => {
         .finally(() => {
           setTaskValue('')
           setShowValidText(false)
-          props.inputUpdateTaskList()
+          props.updateTaskList()
         })
     }
   }
 
   return (
     <>
-      <form className={styles.form} onSubmit={newTaskSubmit}>
-        <div className={styles.inputWrapper}>
-          <input className={styles.input} value={taskValue} placeholder={'Task To Be Done...'}
+      <form className={style.form} onSubmit={newTaskSubmit}>
+        <div className={style.inputWrapper}>
+          <input className={style.input} value={taskValue} placeholder={'Task To Be Done...'}
                  onChange={(e) => setTaskValue(e.target.value)}/>
-          <div className={`${styles.validText} ${showValidText ? styles.active : styles.noActive}`}>{validText}</div>
+          <div style={{width: '90%', top: '40px'}}
+               className={`${styleValid.validText} ${showValidText ? styleValid.active : styleValid.noActive}`}>{validText}</div>
         </div>
-        <button className={styles.button} type="submit">Add</button>
+        <button className={style.button} type="submit">Add</button>
       </form>
       {}
     </>

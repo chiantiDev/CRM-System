@@ -1,0 +1,97 @@
+.taskItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  margin-bottom: 30px;
+  background-color: white;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+}
+
+.checkbox {
+  margin-inline: 20px;
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 3px solid dodgerblue;
+  cursor: pointer;
+
+}
+
+.checkbox:checked {
+  background-color: dodgerblue;
+  background-image: url("../assets/check.svg");
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat
+}
+
+.checkbox:hover {
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.4);
+}
+
+.wrapperTextarea {
+  position: relative;
+  flex: 1;
+}
+
+.textarea {
+  position: relative;
+  width: 90%;
+  resize: none;
+  outline: none;
+  border: none;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.4);
+  font-size: 22px;
+  z-index: 1;
+
+}
+
+.textarea:disabled {
+  box-shadow: none;
+}
+
+.isDone {
+  text-decoration: line-through;
+}
+
+.button {
+  width: 50px;
+  height: 45px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat
+}
+
+.button:hover {
+  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.4);
+}
+
+.edit {
+  background-color: dodgerblue;
+  background-image: url('../assets/edit.svg');
+
+}
+
+.delete {
+  background-color: indianred;
+  background-image: url('../assets/delete.svg');
+}
+
+.save {
+  background-color: dodgerblue;
+  background-image: url('../assets/save.svg');
+}
+
+.cancel {
+  background-color: indianred;
+  background-image: url('../assets/cancel.svg');
+}
