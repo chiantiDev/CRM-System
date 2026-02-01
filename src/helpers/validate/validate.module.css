@@ -1,6 +1,6 @@
 .validText {
   position: absolute;
-
+  display: block;
   left: 6px;
   background-color: white;
   border-radius: 0 0 6px 6px;
@@ -12,10 +12,12 @@
   text-align: center;
 }
 
-.noActive {
-  display: none;
+.input {
+  width: 90%;
+  top: 40px;
 }
 
-.active {
-  display: block;
+.textarea {
+  width: 83%;
+  top: 55px;
 }
