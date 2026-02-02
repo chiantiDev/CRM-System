@@ -1,0 +1,27 @@
+.wrapperButtonsFilter {
+  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.buttonFilter {
+  background: none;
+  border: none;
+  padding: 0 0 5px 0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 24px;
+  color: #757575;
+}
+
+.buttonActiveFilter {
+  color: dodgerblue;
+  box-shadow: 0 2px 0 dodgerblue;
+}
+
+.buttonFilter:hover:not(.buttonActiveFilter) {
+  box-shadow: 0 2px 0 #757575;
+}
+

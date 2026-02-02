@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import fetchGetTask from "../../../api/fetchGetTask.jsx";
-import Button from "../../common/Button/Button.jsx";
+import fetchGetTask from "../../api/fetchGetTask.jsx";
+import ButtonsFilterTask from "../ButtonsFilterTask/ButtonsFilterTask.jsx";
 import TaskItem from "../TaskItem/TaskItem.jsx";
 import style from "./TodoList.module.css";
 
@@ -28,8 +28,7 @@ const TodoList = (props) => {
 
   return (
     <>
-      <Button name='ButtonsFilterTask'
-              taskFilter={taskFilter}
+      <ButtonsFilterTask taskFilter={taskFilter}
               setTaskFilter={setTaskFilter}
               count={count}/>
       <div className={style.wrapperTaskList}>

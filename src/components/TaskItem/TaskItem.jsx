@@ -1,10 +1,10 @@
 import {useState} from "react";
-import fetchPutTaskChecked from "../../../api/fetchPutTaskChecked.jsx";
-import validate from "../../../helpers/validate/validate.jsx";
-import fetchPutTaskEdit from "../../../api/fetchPutTaskEdit.jsx";
-import fetchDeleteTask from "../../../api/fetchDeleteTask.jsx";
+import fetchPutTaskChecked from "../../api/fetchPutTaskChecked.jsx";
+import validate from "../../helpers/validate/validate.jsx";
+import fetchPutTaskEdit from "../../api/fetchPutTaskEdit.jsx";
+import fetchDeleteTask from "../../api/fetchDeleteTask.jsx";
 import style from "./TaskItem.module.css";
-import Button from "../../common/Button/Button.jsx";
+import Button from "../ButtonsFilterTask/ButtonsFilterTask.jsx";
 
 
 const TaskItem = (props) => {
@@ -82,12 +82,10 @@ const TaskItem = (props) => {
                   onChange={(e) => setTitle(e.target.value)}/>
         {valid.message}
       </div>
-      <Button name='ButtonsTaskItem'
-              clickDeleteOrCancel={clickDeleteOrCancel}
-              saveEditTask={saveEditTask}
-              editButton={editButton}
-              deleteTask={deleteTask}
-              cancelEditTask={cancelEditTask}/>
+      <button className={`${style.button} ${!clickDeleteOrCancel ? style.save : style.edit}`}
+              onClick={!clickDeleteOrCancel ? saveEditTask : editButton}></button>
+      <button className={`${style.button} ${clickDeleteOrCancel ? style.delete : style.cancel}`}
+              onClick={clickDeleteOrCancel ? deleteTask : cancelEditTask}></button>
     </div>
   )
 }

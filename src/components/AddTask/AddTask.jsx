@@ -1,8 +1,7 @@
 import {useState} from "react";
-import validate from '../../../helpers/validate/validate.jsx'
-import fetchPostTask from '../../../api/fetchPostTask.jsx'
+import validate from '../../helpers/validate/validate.jsx'
+import fetchPostTask from '../../api/fetchPostTask.jsx'
 import style from './AddTask.module.css'
-import Button from "../../common/Button/Button.jsx";
 
 const AddTask = (props) => {
   const [inputValue, setInputValue] = useState('')
@@ -28,7 +27,7 @@ const AddTask = (props) => {
                onChange={(e) => {setInputValue(e.target.value)}}/>
         {valid.message}
       </div>
-      <Button name='ButtonAddTask'/>
+      <button className={style.buttonAddTask} type="submit">Add</button>
     </form>
   )
 }

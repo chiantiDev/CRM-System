@@ -1,4 +1,4 @@
-import TodoApp from "./components/features/TodoApp/TodoApp.jsx";
+import TodoApp from "./components/TodoApp/TodoApp.jsx";
 
 const App = () => {
 
