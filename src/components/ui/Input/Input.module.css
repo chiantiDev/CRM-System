@@ -12,7 +12,7 @@
   z-index: 1;
 }
 
-.input:hover, .input:focus {
+.input:hover, .input:focus, .input:not(:disabled) {
   box-shadow: 0 0 3px 3px var(--color-box-shodow);
 }
 
