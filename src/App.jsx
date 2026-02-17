@@ -1,9 +1,10 @@
-import TodoApp from "./components/TodoApp/TodoApp.jsx";
+import TodosPage from "./pages/TodosPage/TodosPage.jsx";
+import './variables.css'
 
 const App = () => {
 
   return (
-    <TodoApp />
+    <TodosPage />
   );
 };
 

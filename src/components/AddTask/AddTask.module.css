@@ -1,50 +1,6 @@
 .form {
-  position: relative;
+  display: flex;
+  margin-bottom: 30px;
   width: 100%;
   height: 40px;
-  margin-bottom: 40px;
-  display: flex;
-}
-
-.inputWrapper {
-  position: relative;
-  flex: 1;
-}
-
-.input {
-  position: relative;
-  width: 93%;
-  height: 40px;
-  outline: none;
-  border: none;
-  padding: 0 5px 0;
-  border-radius: 6px;
-  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.4);
-  font-size: 16px;
-  z-index: 1;
-}
-
-.input:hover {
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.4);
-}
-
-.input:focus {
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.4);
-}
-
-.buttonAddTask {
-  width: 110px;
-  height: 40px;
-  border: none;
-  border-radius: 6px;
-  background-color: dodgerblue;
-  color: white;
-  font-size: 16px;
-  padding-block: 5px;
-  padding-inline: 10px;
-}
-
-.buttonAddTask:hover {
-  box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
 }

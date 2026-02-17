@@ -1,68 +1,67 @@
 import {useState} from "react";
-import fetchPutTaskChecked from "../../api/fetchPutTaskChecked.jsx";
-import validate from "../../helpers/validate/validate.jsx";
-import fetchPutTaskEdit from "../../api/fetchPutTaskEdit.jsx";
-import fetchDeleteTask from "../../api/fetchDeleteTask.jsx";
+import todoApi from '../../api/todos.js'
+import textValidation from "../../helpers/validate/textValidation.jsx";
+import Input from "../ui/Input/Input.jsx";
+import Checkbox from "../ui/Checkbox/Checkbox.jsx";
+import IconButton from "../ui/IconButton/IconButton.jsx";
 import style from "./TaskItem.module.css";
-import Button from "../ButtonsFilterTask/ButtonsFilterTask.jsx";
 
 
 const TaskItem = (props) => {
-  const [title, setTitle] = useState(`${props.title}`)
-  const [valid, setValid] = useState({});
-  const [taskEditDisabled, setTaskEditDisabled] = useState(true)
-  const [buttonEditAndSaveType, setButtonEditAndSaveType] = useState('edit')
-  const [buttonDeleteAndCancelType, setButtonDeleteAndCancelType] = useState('delete')
-  const [clickDeleteOrCancel, setClickDeleteOrCancel] = useState(true)
-
-  const editButton = () => {
-    if (buttonEditAndSaveType === 'edit' && buttonDeleteAndCancelType === 'delete') {
-      setButtonEditAndSaveType('save')
-      setButtonDeleteAndCancelType('cancel')
-      setTaskEditDisabled(false)
-      setClickDeleteOrCancel(false)
-    } else {
-      setButtonEditAndSaveType('edit')
-      setButtonDeleteAndCancelType('delete')
-      setTaskEditDisabled(true)
-      setClickDeleteOrCancel(true)
-    }
-  }
+  const [title, setTitle] = useState(props.title)
+  const [isModeButtons, setIsModeButtons] = useState('viewing');
+  const [error, setError] = useState({
+    errorMessage: '',
+    isValid: false
+  });
 
   const checkedTask = async (checked) => {
     try {
-      await fetchPutTaskChecked(checked, props.id)
-      props.updateTodoList()
+      await todoApi.putTaskChecked(checked, props.id)
+      props.isUpdateList(true)
     } catch (error) {
       alert(error)
       console.error(error)
     }
   }
 
-  const saveEditTask = async () => {
-    try {
-      setValid(validate(title, 'textarea'))
+  const editingTask = (e) => {
+    e.preventDefault()
+    setIsModeButtons('editing')
+  }
 
-      if (validate(title).isValid) {
-        await fetchPutTaskEdit(title, props.id)
-        editButton()
-        props.updateTodoList()
+  const savingEditedTask = async (e) => {
+    e.preventDefault()
+    try {
+      if (textValidation(title).isValid) {
+        setError(textValidation(title))
+        await todoApi.putTaskEdit(title, props.id)
+        setIsModeButtons('viewing')
+        props.isUpdateList(true)
+        return
       }
+      setError(textValidation(title))
     } catch (error) {
       alert(error)
       console.error(error)
     }
   }
 
-  const cancelEditTask = () => {
+  const cancelEditingTask = (e) => {
+    e.preventDefault()
     setTitle(props.title)
-    editButton()
+    setError({
+      errorMessage: '',
+      isValid: false
+    })
+    setIsModeButtons('viewing')
   }
 
-  const deleteTask = async () => {
+  const deletingTask = async (e) => {
+    e.preventDefault()
     try {
-      await fetchDeleteTask(props.id)
-      props.updateTodoList()
+      await todoApi.deleteTask(props.id)
+      props.isUpdateList(true)
     } catch (error) {
       alert(error)
       console.error(error)
@@ -70,23 +69,23 @@ const TaskItem = (props) => {
   }
 
   return (
-    <div className={style.taskItem}>
-      <input className={style.checkbox}
-             type="checkbox"
-             defaultChecked={props.isDone}
-             onChange={(e) => checkedTask(e.target.checked)}/>
-      <div className={style.wrapperTextarea}>
-        <textarea className={`${style.textarea} ${props.isDone ? style.isDone : null}`}
-                  value={title}
-                  disabled={taskEditDisabled}
-                  onChange={(e) => setTitle(e.target.value)}/>
-        {valid.message}
-      </div>
-      <button className={`${style.button} ${!clickDeleteOrCancel ? style.save : style.edit}`}
-              onClick={!clickDeleteOrCancel ? saveEditTask : editButton}></button>
-      <button className={`${style.button} ${clickDeleteOrCancel ? style.delete : style.cancel}`}
-              onClick={clickDeleteOrCancel ? deleteTask : cancelEditTask}></button>
-    </div>
+    <form className={style.form}>
+      <Checkbox defaultChecked={props.isDone}
+                onChange={(e) => checkedTask(e.target.checked)}
+      />
+      <Input size={'medium'}
+             value={title}
+             disabled={isModeButtons !== 'editing'}
+             isDone={props.isDone}
+             error={error}
+             errorMessageFor={'taskItem'}
+             onChange={(e) => setTitle(e.target.value)}
+      />
+      <IconButton type={'edit'} isModeButtons={isModeButtons} onClick={editingTask}></IconButton>
+      <IconButton type={'save'} isModeButtons={isModeButtons} onClick={savingEditedTask}></IconButton>
+      <IconButton type={'cancel'} isModeButtons={isModeButtons} onClick={cancelEditingTask}></IconButton>
+      <IconButton type={'delete'} isModeButtons={isModeButtons} onClick={deletingTask}></IconButton>
+    </form>
   )
 }
 

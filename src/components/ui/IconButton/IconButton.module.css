@@ -1,0 +1,43 @@
+.iconButton {
+  display: none;
+  width: 50px;
+  height: 45px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-size: 24px;
+  background-position: center;
+  background-repeat: no-repeat
+}
+
+.iconButton:hover {
+  box-shadow: 0 0 3px 3px var(--color-box-shodow);
+}
+
+.visible {
+  display: block;
+}
+
+.edit {
+  background-color: var(--color-edit);
+  background-image: url('../../../assets/icons/buttonIcons/edit.svg');
+
+}
+
+.save {
+  background-color: var(--color-save);
+  background-image: url('../../../assets/icons/buttonIcons/save.svg');
+
+}
+
+.cancel {
+  background-color: var(--color-cancel);
+  background-image: url('../../../assets/icons/buttonIcons/cancel.svg');
+}
+
+.delete {
+  background-color: var(--color-delete);
+  background-image: url('../../../assets/icons/buttonIcons/delete.svg');
+
+}
