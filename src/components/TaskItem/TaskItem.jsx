@@ -2,7 +2,7 @@ import {useState} from "react";
 import todoApi from '../../api/todos.js'
 import textValidation from "../../helpers/validate/textValidation.jsx";
 import Input from "../ui/Input/Input.jsx";
-import Checkbox from "../ui/Checkbox/Checkbox.jsx";
+import Checkbox from "../ui/CheckBox/Checkbox.jsx";
 import IconButton from "../ui/IconButton/IconButton.jsx";
 import style from "./TaskItem.module.css";
 

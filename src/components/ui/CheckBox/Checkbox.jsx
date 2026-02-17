@@ -1,6 +1,6 @@
 import style from "../../ui/CheckBox/CheckBox.module.css";
 
-const CheckBox = ({
+const Checkbox = ({
                     type = "checkbox",
                     defaultChecked,
                     onChange
@@ -18,4 +18,4 @@ const CheckBox = ({
   )
 }
 
-export default CheckBox
+export default Checkbox
