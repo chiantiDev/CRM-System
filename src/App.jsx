@@ -1,9 +1,11 @@
-const App = () => {
-  return (
-    <div>
-      <h1>To Do List</h1>
-    </div>
-  )
-}
+import TodosPage from "./pages/TodosPage/TodosPage.jsx";
+import './variables.css'
 
-export default App
+const App = () => {
+
+  return (
+    <TodosPage />
+  );
+};
+
+export default App;

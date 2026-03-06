@@ -1,0 +1,39 @@
+.inputWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.input {
+  position: relative;
+  outline: none;
+  border: 1px solid var(--color-box-shodow);
+  background-color: var(--color-background-input);
+  border-radius: 6px;
+  z-index: 1;
+}
+
+.input:hover, .input:focus, .input:not(:disabled) {
+  box-shadow: 0 0 3px 3px var(--color-box-shodow);
+}
+
+.input:disabled {
+  box-shadow: none;
+}
+
+.isDone {
+  text-decoration: line-through;
+}
+
+.medium {
+  border: none;
+  width: 90%;
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+.large {
+  width: 93%;
+  height: 40px;
+  padding: 0 5px 0;
+  font-size: 16px;
+}
