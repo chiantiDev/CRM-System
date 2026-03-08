@@ -1,8 +1,7 @@
-import TodosPage from "./pages/TodosPage/TodosPage.jsx";
+import TodosPage from "./pages/TodosPage/TodosPage";
 import './variables.css'
 
 const App = () => {
-
   return (
     <TodosPage />
   );

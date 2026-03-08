@@ -1,4 +1,6 @@
-const postTask = async (title) => {
+import {TaskStatus, TaskResponse} from "../types/todo.ts";
+
+const postTask = async (title: string): Promise<void> => {
   const response = await fetch('https://easydev.club/api/v1/todos', {
     method: 'POST',
     headers: {
@@ -16,7 +18,7 @@ const postTask = async (title) => {
 }
 
 
-const getTask = async (taskFilter) => {
+const getTask = async (taskFilter: TaskStatus): Promise<TaskResponse> => {
   const response = await fetch(`https://easydev.club/api/v1/todos?filter=${taskFilter}`, {
     method: 'GET',
     headers: {
@@ -32,11 +34,11 @@ const getTask = async (taskFilter) => {
 
   return {
     tasks: result.data,
-    count: result.info
+    counts: result.info
   };
 }
 
-const putTaskChecked = async (checked, id) => {
+const putTaskChecked = async (checked: boolean, id: number): Promise<void> => {
   const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
     method: 'PUT',
     headers: {
@@ -50,7 +52,7 @@ const putTaskChecked = async (checked, id) => {
   }
 }
 
-const putTaskEdit = async (title, id) => {
+const putTaskEdit = async (title: string, id: number): Promise<void> => {
   const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
     method: 'PUT',
     headers: {
@@ -64,7 +66,7 @@ const putTaskEdit = async (title, id) => {
   }
 }
 
-const deleteTask = async (id) => {
+const deleteTask = async (id: number): Promise<void> => {
   const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
     method: 'DELETE',
     headers: {

@@ -1,6 +1,16 @@
+import * as React from "react";
+import {FC, ReactNode} from "react";
 import styles from './Button.module.css';
 
-const Button = ({
+interface ButtonProps {
+  type: "button" | "submit" | "reset"
+  variant?: string
+  size?: string
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  children?: ReactNode
+}
+
+const Button: FC<ButtonProps> = ({
                   type = 'button',
                   variant = 'primary',
                   size = 'large',

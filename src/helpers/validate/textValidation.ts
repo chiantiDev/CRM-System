@@ -1,4 +1,6 @@
-const textValidation = (text) => {
+import {ValidationType} from "../../types/todo.ts";
+
+const textValidation = (text: string): ValidationType => {
   if (text.startsWith(" ")) {
     return {
       errorMessage: 'Текст не должен начинаться с пробела',
