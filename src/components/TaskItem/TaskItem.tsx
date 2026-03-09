@@ -57,14 +57,20 @@ const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
     }
   }
 
-  const cancelEditingTask = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const cancelEditingTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    setTitle(title)
-    setError({
-      errorMessage: '',
-      isValid: false
-    })
-    setIsModeButtons('viewing')
+    try {
+      setTitle(await todoApi.getTitleTask(id))
+      setError({
+        errorMessage: '',
+        isValid: false
+      })
+      setIsModeButtons('viewing')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
+      alert(errorMessage)
+      console.error(errorMessage)
+    }
   }
 
   const deletingTask = async (e: React.MouseEvent<HTMLButtonElement>) => {

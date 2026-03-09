@@ -66,6 +66,23 @@ const putTaskEdit = async (title: string, id: number): Promise<void> => {
   }
 }
 
+const getTitleTask = async (id: number) => {
+  const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+
+  return result.title
+}
+
 const deleteTask = async (id: number): Promise<void> => {
   const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {
     method: 'DELETE',
@@ -79,4 +96,4 @@ const deleteTask = async (id: number): Promise<void> => {
   }
 }
 
-export default {postTask, getTask, putTaskChecked, putTaskEdit, deleteTask}
+export default {postTask, getTask, putTaskChecked, putTaskEdit, getTitleTask, deleteTask}
