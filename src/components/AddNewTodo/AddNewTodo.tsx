@@ -5,13 +5,13 @@ import textValidation from "../../helpers/validate/textValidation.ts";
 import {ValidationType} from "../../types/todo.ts"
 import Button from "../ui/Button/Button.tsx";
 import Input from "../ui/Input/Input.tsx";
-import style from './AddTask.module.css'
+import style from './AddNewTodo.module.css'
 
-interface AddTaskProps {
-  updateList: (value: boolean) => void
+interface AddNewTodoProps {
+  updateTodoList: (value: boolean) => void
 }
 
-const AddTask: FC<AddTaskProps> = ({updateList}) => {
+const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
   const [inputValue, setInputValue] = useState<string>('')
   const [validationError, setValidationError] = useState<ValidationType>({
     errorMessage: '',
@@ -23,9 +23,9 @@ const AddTask: FC<AddTaskProps> = ({updateList}) => {
     try {
       if (textValidation(inputValue).isValid) {
         setValidationError(textValidation(inputValue))
-        await todoApi.postTask(inputValue)
+        await todoApi.addNewTodo(inputValue)
         setInputValue('')
-        updateList(true)
+        updateTodoList(true)
         return
       }
       setValidationError(textValidation(inputValue))
@@ -50,4 +50,4 @@ const AddTask: FC<AddTaskProps> = ({updateList}) => {
   )
 }
 
-export default AddTask
+export default AddNewTodo

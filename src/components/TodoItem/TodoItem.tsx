@@ -6,27 +6,27 @@ import textValidation from "../../helpers/validate/textValidation.ts";
 import Input from "../ui/Input/Input.tsx";
 import Checkbox from "../ui/CheckBox/Checkbox.tsx";
 import IconButton from "../ui/IconButton/IconButton.tsx";
-import style from "./TaskItem.module.css";
+import style from "./TodoItem.module.css";
 
-interface TaskItemProps {
+interface TodoItemProps {
   id: number
-  titleTask: string
+  titleTodo: string
   isDone: boolean
-  updateList: (value: boolean) => void
+  updateTodoList: (value: boolean) => void
 }
 
-const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
-  const [title, setTitle] = useState<string>(titleTask)
+const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
+  const [title, setTitle] = useState<string>(titleTodo)
   const [isModeButtons, setIsModeButtons] = useState<ModeButtons>('viewing');
   const [error, setError] = useState<ValidationType>({
     errorMessage: '',
     isValid: false
   });
 
-  const checkedTask = async (checked: boolean) => {
+  const checkedTodo = async (isDone: boolean) => {
     try {
-      await todoApi.putTaskChecked(checked, id)
-      updateList(true)
+      await todoApi.updateTodo(id, {isDone})
+      updateTodoList(true)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
       alert(errorMessage)
@@ -34,19 +34,19 @@ const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
     }
   }
 
-  const editingTask = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const editingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setIsModeButtons('editing')
   }
 
-  const savingEditedTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const savingEditedTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
       if (textValidation(title).isValid) {
         setError(textValidation(title))
-        await todoApi.putTaskEdit(title, id)
+        await todoApi.updateTodo(id, {title})
         setIsModeButtons('viewing')
-        updateList(true)
+        updateTodoList(true)
         return
       }
       setError(textValidation(title))
@@ -57,27 +57,17 @@ const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
     }
   }
 
-  const cancelEditingTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const cancelEditingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    try {
-      setTitle(await todoApi.getTitleTask(id))
-      setError({
-        errorMessage: '',
-        isValid: false
-      })
-      setIsModeButtons('viewing')
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
-      alert(errorMessage)
-      console.error(errorMessage)
-    }
+    setTitle(titleTodo)
+    setIsModeButtons('viewing')
   }
 
-  const deletingTask = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const deletingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     try {
-      await todoApi.deleteTask(id)
-      updateList(true)
+      await todoApi.deleteTodo(id)
+      updateTodoList(true)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
       alert(errorMessage)
@@ -88,7 +78,7 @@ const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
   return (
     <form className={style.form}>
       <Checkbox defaultChecked={isDone}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTask(e.target.checked)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTodo(e.target.checked)}
       />
       <Input size={'medium'}
              value={title}
@@ -98,12 +88,12 @@ const TaskItem: FC<TaskItemProps> = ({id, titleTask, isDone, updateList}) => {
              errorMessageFor={'taskItem'}
              onChange={(e) => setTitle(e.target.value)}
       />
-      <IconButton type={'edit'} isModeButtons={isModeButtons} onClick={editingTask}></IconButton>
-      <IconButton type={'save'} isModeButtons={isModeButtons} onClick={savingEditedTask}></IconButton>
-      <IconButton type={'cancel'} isModeButtons={isModeButtons} onClick={cancelEditingTask}></IconButton>
-      <IconButton type={'delete'} isModeButtons={isModeButtons} onClick={deletingTask}></IconButton>
+      <IconButton type={'edit'} isModeButtons={isModeButtons} onClick={editingTodo}></IconButton>
+      <IconButton type={'save'} isModeButtons={isModeButtons} onClick={savingEditedTodo}></IconButton>
+      <IconButton type={'cancel'} isModeButtons={isModeButtons} onClick={cancelEditingTodo}></IconButton>
+      <IconButton type={'delete'} isModeButtons={isModeButtons} onClick={deletingTodo}></IconButton>
     </form>
   )
 }
 
-export default TaskItem
+export default TodoItem
