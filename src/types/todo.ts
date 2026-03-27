@@ -1,20 +1,26 @@
-export type TaskStatus = 'all' | 'inWork' | 'completed'
+export type TasksStatus = 'all' | 'inWork' | 'completed'
 
-export interface Task {
+export interface TaskItem {
   id: number,
   title: string,
+  created: string,
   isDone: boolean,
 }
 
-export interface Counts {
+export interface TasksStatuses {
   all: number,
   inWork: number,
   completed: number,
 }
 
-export interface TaskResponse {
-  tasks: Task[],
-  counts: Counts,
+export interface TasksMeta {
+  totalAmount: number
+}
+
+export interface MetaResponse<T, N, M> {
+  data: T,
+  info: N,
+  meta: M,
 }
 
 export interface ValidationType {
