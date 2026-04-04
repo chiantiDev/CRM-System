@@ -10,7 +10,7 @@
 
 .primary {
   background-color: var(--color-primary);
-  color: var(--color-text);
+  color: var(--color-secondary);
 }
 
 .large {

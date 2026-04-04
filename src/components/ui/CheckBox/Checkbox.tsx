@@ -22,7 +22,8 @@ const Checkbox: FC<CheckboxProps> = ({
     <input className={checkBoxClasses}
            type={type}
            defaultChecked={defaultChecked}
-           onChange={onChange}/>
+           onChange={onChange}
+    />
   )
 }
 

@@ -21,11 +21,9 @@ export interface MetaResponse<T, N> {
   }
 }
 
-export interface ValidationType {
+export interface ValidateResult {
   errorMessage: string,
   isValid: boolean,
 }
 
 export type TodoStatus = 'all' | 'completed' | 'inWork'
-
-export type ModeButtons = 'viewing' | 'editing'

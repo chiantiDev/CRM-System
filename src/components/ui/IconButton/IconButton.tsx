@@ -1,34 +1,38 @@
-import style from './IconButton.module.css'
+import styles from './IconButton.module.css'
 import * as React from "react";
-import {FC} from "react";
-import {ModeButtons} from "../../../types/todo.ts";
+import {CSSProperties, FC, ReactNode} from "react";
+
+type CSSVariables = {
+  [key: `--${string}`]: string | number | undefined;
+};
 
 interface IconButtonProps {
-  type: 'edit' | 'delete' | 'save' | 'cancel'
-  isModeButtons: ModeButtons
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+  style?: CSSProperties & CSSVariables
+  className?: string
+  type?: 'button' | 'submit'
+  children?: ReactNode
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
+
+
 const IconButton: FC<IconButtonProps> = ({
-                      type,
-                      isModeButtons,
-                      onClick,
-                    }) => {
-
-  const buttonVisibility = {
-    viewing: ['edit', 'delete'],
-    editing: ['save', 'cancel']
-  };
-
+                                           style = {},
+                                           className,
+                                           type = 'button',
+                                           children,
+                                           onClick}) => {
   const iconButtonClasses: string = [
-    style.iconButton,
-    style[type],
-    buttonVisibility[isModeButtons].includes(type) ? style.visible : ''
+    styles.iconButton,
+    className,
   ].filter(Boolean).join(' ');
 
   return (
-    <button className={iconButtonClasses}
-            onClick={onClick}></button>
+    <button style={style}
+            className={iconButtonClasses}
+            type={type}
+            onClick={onClick}>{children}
+    </button>
   )
 }
 

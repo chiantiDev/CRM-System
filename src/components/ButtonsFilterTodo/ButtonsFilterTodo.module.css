@@ -13,15 +13,15 @@
   cursor: pointer;
   user-select: none;
   font-size: 24px;
-  color: var(--color-button-filter);
+  color: var(--color-outline);
 }
 
 .buttonActiveFilter {
-  color: var(--color-button-filter-active);
-  box-shadow: 0 2px 0 var(--color-button-filter-active);
+  color: var(--color-primary);
+  box-shadow: 0 2px 0 var(--color-primary);
 }
 
 .buttonFilter:hover:not(.buttonActiveFilter) {
-  box-shadow: 0 2px 0 var(--color-button-filter);
+  box-shadow: 0 2px 0 var(--color-primary);
 }
 

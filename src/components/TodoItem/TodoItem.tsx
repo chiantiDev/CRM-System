@@ -1,7 +1,7 @@
 import * as React from "react";
 import {FC, useState} from "react";
 import todoApi from '../../api/todoApi.ts'
-import {ModeButtons, ValidationType} from "../../types/todo.ts";
+// import {ValidateResult} from "../../types/todo.ts";
 import textValidation from "../../helpers/validate/textValidation.ts";
 import Input from "../ui/Input/Input.tsx";
 import Checkbox from "../ui/CheckBox/Checkbox.tsx";
@@ -16,12 +16,7 @@ interface TodoItemProps {
 }
 
 const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
-  const [title, setTitle] = useState<string>(titleTodo)
-  const [isModeButtons, setIsModeButtons] = useState<ModeButtons>('viewing');
-  const [error, setError] = useState<ValidationType>({
-    errorMessage: '',
-    isValid: false
-  });
+  const [modeButtons, setModeButtons] = useState<'viewing' | 'editing'>('viewing');
 
   const checkedTodo = async (isDone: boolean) => {
     try {
@@ -36,20 +31,19 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
 
   const editingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    setIsModeButtons('editing')
+    setModeButtons('editing')
   }
 
-  const savingEditedTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const savingEditedTodo = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      if (textValidation(title).isValid) {
-        setError(textValidation(title))
-        await todoApi.updateTodo(id, {title})
-        setIsModeButtons('viewing')
+      if (textValidation(e.target.input.value).isValid) {
+        await todoApi.updateTodo(id, {title: e.target.input.value})
+        setModeButtons('viewing')
         updateTodoList(true)
         return
       }
-      setError(textValidation(title))
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
       alert(errorMessage)
@@ -59,8 +53,7 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
 
   const cancelEditingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    setTitle(titleTodo)
-    setIsModeButtons('viewing')
+    setModeButtons('viewing')
   }
 
   const deletingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,22 +69,42 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   }
 
   return (
-    <form className={style.form}>
+    <form className={style.form} onSubmit={savingEditedTodo}>
       <Checkbox defaultChecked={isDone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTodo(e.target.checked)}
       />
-      <Input size={'medium'}
-             value={title}
-             disabled={isModeButtons !== 'editing'}
-             isDone={isDone}
-             validation={error}
-             errorMessageFor={'taskItem'}
-             onChange={(e) => setTitle(e.target.value)}
-      />
-      <IconButton type={'edit'} isModeButtons={isModeButtons} onClick={editingTodo}></IconButton>
-      <IconButton type={'save'} isModeButtons={isModeButtons} onClick={savingEditedTodo}></IconButton>
-      <IconButton type={'cancel'} isModeButtons={isModeButtons} onClick={cancelEditingTodo}></IconButton>
-      <IconButton type={'delete'} isModeButtons={isModeButtons} onClick={deletingTodo}></IconButton>
+      <div className={style.wrapperClasses}>
+        <Input style={{ textDecoration: isDone ? 'line-through' : 'none' }} value={titleTodo} disabled={modeButtons !== 'editing'}/>
+        {/*<p className={errorClasses}>{validation.errorMessage}</p>*/}
+      </div>
+      {modeButtons === 'viewing' &&
+        (<>
+          <IconButton style={{backgroundColor: 'var(--color-primary)'}}
+                      onClick={editingTodo}
+          >
+            <img width={35} src="/src/assets/icons/buttonIcons/edit.svg" alt="deleting-todo"/>
+          </IconButton>
+          <IconButton style={{backgroundColor: 'var(--color-danger)'}}
+                      onClick={deletingTodo}
+          >
+            <img width={35} src="/src/assets/icons/buttonIcons/delete.svg" alt="deleting-todo"/>
+          </IconButton>
+        </>)
+      }
+      {modeButtons === 'editing' &&
+        (<>
+          <IconButton style={{backgroundColor: 'var(--color-success)'}}
+                      type={'submit'}
+          >
+            <img width={35} src="/src/assets/icons/buttonIcons/save.svg" alt="saving-editing-todo"/>
+          </IconButton>
+          <IconButton style={{border: '2px solid var(--color-outline)'}}
+                      onClick={cancelEditingTodo}
+          >
+            <img width={35} src="/src/assets/icons/buttonIcons/cancel.svg" alt="cancel-editing-todo"/>
+          </IconButton>
+        </>)
+      }
     </form>
   )
 }

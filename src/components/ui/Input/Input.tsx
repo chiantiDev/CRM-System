@@ -1,61 +1,57 @@
 import * as React from "react";
-import {FC} from "react";
-import {ValidationType} from "../../../types/todo.ts";
-import style from './Input.module.css';
-import styleErrorMessage from "../../../helpers/validate/textValidation.module.css";
+import {CSSProperties, FC} from "react";
+import styles from './Input.module.css';
+
+type CSSVariables = {
+  [key: `--${string}`]: string | number | undefined;
+};
 
 interface InputProps {
+  style?: CSSProperties & CSSVariables
+  className?: string;
   type?: string,
-  size?: string,
+  name?: string,
   placeholder?: string,
   value?: string,
   disabled?: boolean,
-  isDone?: boolean,
-  validation: ValidationType
-  errorMessageFor: string,
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Input: FC<InputProps> = ({
-                 type = 'text',
-                 size = 'medium',
-                 placeholder,
-                 value,
-                 disabled,
-                 isDone,
-                 validation,
-                 errorMessageFor,
-                 onChange,
-               }) => {
-
-  const wrapperClasses: string = [
-    style.inputWrapper,
-  ].filter(Boolean).join(' ');
+                                 style,
+                                 className,
+                                 type = 'text',
+                                 name = 'input',
+                                 placeholder,
+                                 value,
+                                 disabled = false,
+                                 onChange,
+                               }) => {
 
   const inputClasses: string = [
-    style.input,
-    style[size],
-    isDone ? style.isDone : '',
+    styles.input,
+    style,
+    className,
+    disabled && styles.active,
   ].filter(Boolean).join(' ');
 
-  const errorClasses: string = [
-    styleErrorMessage.errorMessage,
-    styleErrorMessage[errorMessageFor],
-    validation.errorMessage ? styleErrorMessage[errorMessageFor+'Visible'] : '',
-  ].filter(Boolean).join(' ');
+  // const errorClasses: string = [
+  //   styleErrorMessage.errorMessage,
+  //   styleErrorMessage[errorMessageFor],
+  //   validation.errorMessage ? styleErrorMessage[errorMessageFor+'Visible'] : '',
+  // ].filter(Boolean).join(' ');
 
   return (
-    <div className={wrapperClasses}>
-      <input
-        className={inputClasses}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        disabled={disabled}
-        onChange={onChange}
-      />
-      <p className={errorClasses}>{validation.errorMessage}</p>
-    </div>
+    <input
+      style={style}
+      className={inputClasses}
+      type={type}
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      disabled={disabled}
+      onChange={onChange}
+    />
   );
 };
 
