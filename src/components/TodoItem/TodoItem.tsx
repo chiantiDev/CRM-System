@@ -9,6 +9,11 @@ import Checkbox from "../ui/CheckBox/Checkbox.tsx";
 import IconButton from "../ui/IconButton/IconButton.tsx";
 import style from "./TodoItem.module.css";
 
+import editIcon from '/src/assets/icons/buttonIcons/edit.svg';
+import deleteIcon from '/src/assets/icons/buttonIcons/delete.svg';
+import saveIcon from '/src/assets/icons/buttonIcons/save.svg';
+import cancelIcon from '/src/assets/icons/buttonIcons/cancel.svg';
+
 interface TodoItemProps {
   id: number
   titleTodo: string
@@ -102,20 +107,20 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
       {modeButtons === 'viewing' &&
         (<>
           <IconButton className={style.editButton} type={"button"} onClick={editingTodo}>
-            <img width={35} src="/src/assets/icons/buttonIcons/edit.svg" alt="editing-todo"/>
+            <img width={35} src={editIcon} alt="editing-todo"/>
           </IconButton>
           <IconButton className={style.deleteButton} type={"button"} onClick={deletingTodo}>
-            <img width={35} src="/src/assets/icons/buttonIcons/delete.svg" alt="deleting-todo"/>
+            <img width={35} src={deleteIcon} alt="deleting-todo"/>
           </IconButton>
         </>)
       }
       {modeButtons === 'editing' &&
         (<>
           <IconButton className={style.saveButton} type={"submit"}>
-            <img width={35} src="/src/assets/icons/buttonIcons/save.svg" alt="saving-editin-todo"/>
+            <img width={35} src={saveIcon} alt="saving-editin-todo"/>
           </IconButton>
           <IconButton className={style.cancelButton} type={"button"} onClick={cancelEditingTodo}>
-            <img width={35} src="/src/assets/icons/buttonIcons/cancel.svg" alt="cancel-editing-todo"/>
+            <img width={35} src={cancelIcon} alt="cancel-editing-todo"/>
           </IconButton>
         </>)
       }
