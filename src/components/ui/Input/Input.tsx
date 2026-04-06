@@ -32,7 +32,6 @@ const Input: FC<InputProps> = ({
     styles.input,
     style,
     className,
-    disabled && styles.active,
   ].filter(Boolean).join(' ');
 
   // const errorClasses: string = [

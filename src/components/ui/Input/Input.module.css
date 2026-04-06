@@ -11,18 +11,7 @@
   box-shadow: 0 0 3px 3px var(--color-shodow);
 }
 
-.active {
-  box-shadow: 0 0 3px 3px var(--color-shodow);
-}
-
-.isDone {
-  text-decoration: line-through;
-}
-
-.todoItemInput {
-  border: none;
-  width: 90%;
-  margin-right: 10px;
-  font-size: 22px;
+.input:disabled {
+  box-shadow: none;
 }
 

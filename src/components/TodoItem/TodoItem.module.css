@@ -14,3 +14,14 @@
   position: relative;
   flex: 1;
 }
+
+.todoItemInput {
+  border: none;
+  width: 90%;
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+.active {
+  box-shadow: 0 0 3px 3px var(--color-shodow);
+}

@@ -1,12 +1,13 @@
 import * as React from "react";
 import {FC, useState} from "react";
 import todoApi from '../../api/todoApi.ts'
-// import {ValidateResult} from "../../types/todo.ts";
-import textValidation from "../../helpers/validate/textValidation.ts";
+import {ValidateResult} from "../../types/todo.ts";
+import validationInput from "../../helpers/validate/validationInput.ts";
 import Input from "../ui/Input/Input.tsx";
 import Checkbox from "../ui/CheckBox/Checkbox.tsx";
 import IconButton from "../ui/IconButton/IconButton.tsx";
-import style from "./TodoItem.module.css";
+import styles from "./TodoItem.module.css";
+import stylesValidationMessage from "../../helpers/validate/validationMessage.module.css";
 
 interface TodoItemProps {
   id: number
@@ -16,7 +17,12 @@ interface TodoItemProps {
 }
 
 const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
+  const [title, setTitle] = useState<string>(titleTodo)
   const [modeButtons, setModeButtons] = useState<'viewing' | 'editing'>('viewing');
+  const [validationResult, setValidationResult] = useState<ValidateResult>({
+    errorMessage: '',
+    isValid: true
+  })
 
   const checkedTodo = async (isDone: boolean) => {
     try {
@@ -36,8 +42,9 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
 
   const savingEditedTodo = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setValidationResult(validationInput(e.target.input.value))
     try {
-      if (textValidation(e.target.input.value).isValid) {
+      if (validationInput(e.target.input.value).isValid) {
         await todoApi.updateTodo(id, {title: e.target.input.value})
         setModeButtons('viewing')
         updateTodoList(true)
@@ -53,6 +60,11 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
 
   const cancelEditingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    setTitle(titleTodo)
+    setValidationResult({
+      errorMessage: '',
+      isValid: true
+    })
     setModeButtons('viewing')
   }
 
@@ -69,13 +81,21 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   }
 
   return (
-    <form className={style.form} onSubmit={savingEditedTodo}>
+    <form className={styles.form} onSubmit={savingEditedTodo}>
       <Checkbox defaultChecked={isDone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTodo(e.target.checked)}
       />
-      <div className={style.wrapperClasses}>
-        <Input style={{ textDecoration: isDone ? 'line-through' : 'none' }} value={titleTodo} disabled={modeButtons !== 'editing'}/>
-        {/*<p className={errorClasses}>{validation.errorMessage}</p>*/}
+      <div className={styles.inputWrapper}>
+        <Input style={{ textDecoration: isDone ? 'line-through' : 'none' }}
+               className={`${styles.todoItemInput} ${modeButtons === 'editing' ? styles.active : ''}`}
+               value={title}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+               disabled={modeButtons === 'viewing'}/>
+        <p className={`${stylesValidationMessage.errorMessage} 
+                       ${stylesValidationMessage.todoItem}
+                       ${!validationResult.isValid ? stylesValidationMessage.todoItemVisible : ''}
+                       `}
+        >{validationResult.errorMessage}</p>
       </div>
       {modeButtons === 'viewing' &&
         (<>

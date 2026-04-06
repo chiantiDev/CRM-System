@@ -1,6 +1,6 @@
 import {ValidateResult} from "../../types/todo.ts";
 
-const textValidation = (text: string): ValidateResult => {
+const validationInput = (text: string): ValidateResult => {
   if (text.startsWith(" ")) {
     return {
       errorMessage: 'Текст не должен начинаться с пробела',
@@ -36,4 +36,4 @@ const textValidation = (text: string): ValidateResult => {
 
 };
 
-export default textValidation;
+export default validationInput;
