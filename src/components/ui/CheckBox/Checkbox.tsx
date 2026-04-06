@@ -3,24 +3,21 @@ import {FC} from "react";
 import style from "../../ui/CheckBox/CheckBox.module.css";
 
 interface CheckboxProps {
-  type?: string
+  className?: string,
   defaultChecked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Checkbox: FC<CheckboxProps> = ({
-                    type = "checkbox",
-                    defaultChecked,
-                    onChange
-                  }) => {
+const Checkbox: FC<CheckboxProps> = ({className, defaultChecked, onChange}) => {
 
   const checkBoxClasses = [
-    style.checkbox
+    style.checkbox,
+    className,
   ].filter(Boolean).join(' ');
 
   return (
     <input className={checkBoxClasses}
-           type={type}
+           type="checkbox"
            defaultChecked={defaultChecked}
            onChange={onChange}
     />

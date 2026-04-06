@@ -1,3 +1,5 @@
+export type TodoStatus = 'all' | 'completed' | 'inWork'
+
 export interface Todo {
   id: number;
   title: string;
@@ -25,5 +27,3 @@ export interface ValidateResult {
   errorMessage: string,
   isValid: boolean,
 }
-
-export type TodoStatus = 'all' | 'completed' | 'inWork'

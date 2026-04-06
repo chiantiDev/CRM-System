@@ -1,38 +1,28 @@
-import styles from './IconButton.module.css'
 import * as React from "react";
-import {CSSProperties, FC, ReactNode} from "react";
-
-type CSSVariables = {
-  [key: `--${string}`]: string | number | undefined;
-};
+import {FC, ReactNode} from "react";
+import style from './IconButton.module.css'
 
 interface IconButtonProps {
-  style?: CSSProperties & CSSVariables
   className?: string
-  type?: 'button' | 'submit'
-  children?: ReactNode
+  type: 'button' | 'submit'
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  children: ReactNode
 }
 
 
 
-const IconButton: FC<IconButtonProps> = ({
-                                           style = {},
-                                           className,
-                                           type = 'button',
-                                           children,
-                                           onClick}) => {
+const IconButton: FC<IconButtonProps> = ({className, type, onClick, children}) => {
+
   const iconButtonClasses: string = [
-    styles.iconButton,
+    style.iconButton,
     className,
   ].filter(Boolean).join(' ');
 
   return (
-    <button style={style}
-            className={iconButtonClasses}
+    <button className={iconButtonClasses}
             type={type}
-            onClick={onClick}>{children}
-    </button>
+            onClick={onClick}
+    >{children}</button>
   )
 }
 

@@ -1,6 +1,6 @@
 import {FC} from "react";
-import style from './ButtonsFilterTodo.module.css';
 import {TodoInfo, TodoStatus} from "../../types/todo.ts";
+import style from './ButtonsFilterTodo.module.css';
 
 interface ButtonsFilterTaskProps {
     todoFilter: TodoStatus

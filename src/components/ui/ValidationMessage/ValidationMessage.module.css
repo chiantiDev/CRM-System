@@ -1,0 +1,13 @@
+.errorMessage {
+  position: absolute;
+  margin: 0;
+  padding: 4px;
+  color: var(--color-danger);
+  background-color: var(--color-secondary);
+  border-radius: 0 0 6px 6px;
+  font-size: 14px;
+  text-align: center;
+  user-select: none;
+  transition: 500ms;
+  z-index: 0;
+}

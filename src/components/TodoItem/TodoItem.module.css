@@ -15,13 +15,46 @@
   flex: 1;
 }
 
-.todoItemInput {
+.input {
   border: none;
   width: 90%;
   margin-right: 10px;
   font-size: 22px;
 }
 
-.active {
+.activeInput {
   box-shadow: 0 0 3px 3px var(--color-shodow);
+}
+
+.validMessage {
+  width: 85%;
+  height: 30px;
+  top: 16px;
+  left: 4px;
+}
+
+.validMessageVisible {
+  top: 28px;
+  box-shadow: 0 0 1px 1px var(--color-danger);
+}
+
+.isDone {
+  text-decoration: line-through
+}
+
+.editButton {
+  background-color: var(--color-primary)
+}
+
+.saveButton {
+
+  background-color: var(--color-success)
+}
+
+.cancelButton {
+  border: 2px solid var(--color-outline)
+}
+
+.deleteButton {
+  background-color: var(--color-danger)
 }

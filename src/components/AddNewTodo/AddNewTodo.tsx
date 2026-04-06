@@ -3,10 +3,10 @@ import {FC, useState} from "react";
 import {ValidateResult} from "../../types/todo.ts";
 import todoApi from '../../api/todoApi.ts'
 import validationInput from "../../helpers/validate/validationInput.ts";
+import ValidationMessage from "../ui/ValidationMessage/ValidationMessage.tsx";
 import Button from "../ui/Button/Button.tsx";
 import Input from "../ui/Input/Input.tsx";
-import styles from './AddNewTodo.module.css'
-import stylesValidationMessage from '../../helpers/validate/validationMessage.module.css'
+import style from './AddNewTodo.module.css'
 
 interface AddNewTodoProps {
   updateTodoList: (value: boolean) => void
@@ -37,16 +37,14 @@ const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
   }
 
   return (
-    <form className={styles.form} onSubmit={newTaskSubmit}>
-      <div className={styles.inputWrapper}>
-        <Input className={styles.newTodoInput} placeholder={'Task To Be Done...'}/>
-        <p className={`${stylesValidationMessage.errorMessage} 
-                       ${stylesValidationMessage.addNewTodo}
-                       ${!validationResult.isValid ? stylesValidationMessage.addNewTodoVisible : ''}
-                       `}
-        >{validationResult.errorMessage}</p>
+    <form className={style.form} onSubmit={newTaskSubmit}>
+      <div className={style.inputWrapper}>
+        <Input className={style.input} placeholder={'Task To Be Done...'}/>
+        <ValidationMessage className={`${style.validMessage}
+                                       ${!validationResult.isValid ? style.validMessageVisible : ''}`}
+        >{validationResult.errorMessage}</ValidationMessage>
       </div>
-      <Button type="submit" variant="primary">Add</Button>
+      <Button className={style.button} type="submit">Add</Button>
     </form>
   )
 }

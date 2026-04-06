@@ -1,13 +1,13 @@
 import * as React from "react";
 import {FC, useState} from "react";
-import todoApi from '../../api/todoApi.ts'
 import {ValidateResult} from "../../types/todo.ts";
+import todoApi from '../../api/todoApi.ts'
 import validationInput from "../../helpers/validate/validationInput.ts";
+import ValidationMessage from "../ui/ValidationMessage/ValidationMessage.tsx";
 import Input from "../ui/Input/Input.tsx";
 import Checkbox from "../ui/CheckBox/Checkbox.tsx";
 import IconButton from "../ui/IconButton/IconButton.tsx";
-import styles from "./TodoItem.module.css";
-import stylesValidationMessage from "../../helpers/validate/validationMessage.module.css";
+import style from "./TodoItem.module.css";
 
 interface TodoItemProps {
   id: number
@@ -81,46 +81,40 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   }
 
   return (
-    <form className={styles.form} onSubmit={savingEditedTodo}>
+    <form className={style.form} onSubmit={savingEditedTodo}>
       <Checkbox defaultChecked={isDone}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTodo(e.target.checked)}
       />
-      <div className={styles.inputWrapper}>
-        <Input style={{ textDecoration: isDone ? 'line-through' : 'none' }}
-               className={`${styles.todoItemInput} ${modeButtons === 'editing' ? styles.active : ''}`}
+      <div className={style.inputWrapper}>
+        <Input className={`
+               ${style.input}
+               ${isDone ? style.isDone: ''}
+               ${modeButtons === 'editing' ? style.activeInput : ''}
+               `}
                value={title}
                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-               disabled={modeButtons === 'viewing'}/>
-        <p className={`${stylesValidationMessage.errorMessage} 
-                       ${stylesValidationMessage.todoItem}
-                       ${!validationResult.isValid ? stylesValidationMessage.todoItemVisible : ''}
-                       `}
-        >{validationResult.errorMessage}</p>
+               disabled={modeButtons === 'viewing'}
+        />
+        <ValidationMessage className={`${style.validMessage}
+                                       ${!validationResult.isValid ? style.validMessageVisible : ''}`}
+        >{validationResult.errorMessage}</ValidationMessage>
       </div>
       {modeButtons === 'viewing' &&
         (<>
-          <IconButton style={{backgroundColor: 'var(--color-primary)'}}
-                      onClick={editingTodo}
-          >
-            <img width={35} src="/src/assets/icons/buttonIcons/edit.svg" alt="deleting-todo"/>
+          <IconButton className={style.editButton} type={"button"} onClick={editingTodo}>
+            <img width={35} src="/src/assets/icons/buttonIcons/edit.svg" alt="editing-todo"/>
           </IconButton>
-          <IconButton style={{backgroundColor: 'var(--color-danger)'}}
-                      onClick={deletingTodo}
-          >
+          <IconButton className={style.deleteButton} type={"button"} onClick={deletingTodo}>
             <img width={35} src="/src/assets/icons/buttonIcons/delete.svg" alt="deleting-todo"/>
           </IconButton>
         </>)
       }
       {modeButtons === 'editing' &&
         (<>
-          <IconButton style={{backgroundColor: 'var(--color-success)'}}
-                      type={'submit'}
-          >
-            <img width={35} src="/src/assets/icons/buttonIcons/save.svg" alt="saving-editing-todo"/>
+          <IconButton className={style.saveButton} type={"submit"}>
+            <img width={35} src="/src/assets/icons/buttonIcons/save.svg" alt="saving-editin-todo"/>
           </IconButton>
-          <IconButton style={{border: '2px solid var(--color-outline)'}}
-                      onClick={cancelEditingTodo}
-          >
+          <IconButton className={style.cancelButton} type={"button"} onClick={cancelEditingTodo}>
             <img width={35} src="/src/assets/icons/buttonIcons/cancel.svg" alt="cancel-editing-todo"/>
           </IconButton>
         </>)

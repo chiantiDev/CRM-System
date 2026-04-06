@@ -8,6 +8,13 @@ const validationInput = (text: string): ValidateResult => {
     };
   }
 
+  if (text.endsWith(" ")) {
+    return {
+      errorMessage:'Текст не должен заканчиваться пробелом',
+      isValid: false
+    };
+  }
+
   if (text.length === 0) {
     return {
       errorMessage: 'Это поле не может быть пустым',
@@ -15,7 +22,7 @@ const validationInput = (text: string): ValidateResult => {
     };
   }
 
-  if (text.length < 2 || text.length === 2 && text[1] === ' ') {
+  if (text.length < 2) {
     return {
       errorMessage:'Минимальная длина текста 2 символа',
       isValid: false

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import todoApi from '../../api/todoApi.ts'
 import AddNewTodo from "../../components/AddNewTodo/AddNewTodo.tsx";
 import ButtonsFilterTodo from "../../components/ButtonsFilterTodo/ButtonsFilterTodo.tsx";
@@ -6,7 +6,7 @@ import TodoItem from "../../components/TodoItem/TodoItem.tsx";
 import {TodoStatus, Todo, TodoInfo, MetaResponse} from "../../types/todo.ts"
 import style from './TodosPage.module.css'
 
-const TodosPage = () => {
+const TodosPage: FC = () => {
   const [todoStatus, setTodoStatus] = useState<TodoStatus>('all');
   const [todosData, setTodosData] = useState<MetaResponse<Todo, TodoInfo>>({
     data: [],

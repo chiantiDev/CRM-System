@@ -1,36 +1,26 @@
 import * as React from "react";
 import {FC, ReactNode} from "react";
-import styles from './Button.module.css';
+import style from './Button.module.css';
 
 interface ButtonProps {
-  type: "button" | "submit" | "reset"
-  variant?: string
-  size?: string
+  className?: string;
+  type: "button" | "submit"
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   children?: ReactNode
 }
 
-const Button: FC<ButtonProps> = ({
-                  type = 'button',
-                  variant = 'primary',
-                  size = 'large',
-                  onClick,
-                  children,
-                }) => {
+const Button: FC<ButtonProps> = ({className, type, onClick, children,}) => {
+
   const buttonClasses = [
-    styles.button,
-    styles[variant],
-    styles[size],
+    style.button,
+    className,
   ].filter(Boolean).join(' ');
 
   return (
-    <button
-      type={type}
-      className={buttonClasses}
-      onClick={onClick}
-    >
-      {children}
-    </button>
+    <button className={buttonClasses}
+            type={type}
+            onClick={onClick}
+    >{children}</button>
   );
 };
 

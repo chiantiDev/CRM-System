@@ -1,16 +1,9 @@
 import * as React from "react";
-import {CSSProperties, FC} from "react";
-import styles from './Input.module.css';
-
-type CSSVariables = {
-  [key: `--${string}`]: string | number | undefined;
-};
+import {FC} from "react";
+import style from './Input.module.css';
 
 interface InputProps {
-  style?: CSSProperties & CSSVariables
   className?: string;
-  type?: string,
-  name?: string,
   placeholder?: string,
   value?: string,
   disabled?: boolean,
@@ -18,34 +11,23 @@ interface InputProps {
 }
 
 const Input: FC<InputProps> = ({
-                                 style,
                                  className,
-                                 type = 'text',
-                                 name = 'input',
                                  placeholder,
                                  value,
-                                 disabled = false,
+                                 disabled,
                                  onChange,
                                }) => {
 
   const inputClasses: string = [
-    styles.input,
-    style,
+    style.input,
     className,
   ].filter(Boolean).join(' ');
 
-  // const errorClasses: string = [
-  //   styleErrorMessage.errorMessage,
-  //   styleErrorMessage[errorMessageFor],
-  //   validation.errorMessage ? styleErrorMessage[errorMessageFor+'Visible'] : '',
-  // ].filter(Boolean).join(' ');
-
   return (
     <input
-      style={style}
       className={inputClasses}
-      type={type}
-      name={name}
+      type='text'
+      name='input'
       placeholder={placeholder}
       value={value}
       disabled={disabled}
