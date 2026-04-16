@@ -1,52 +1,48 @@
-import * as React from "react";
-import {FC, useState} from "react";
-import {ValidateResult} from "../../types/todo.ts";
-import todoApi from '../../api/todoApi.ts'
-import validationInput from "../../helpers/validate/validationInput.ts";
-import ValidationMessage from "../ui/ValidationMessage/ValidationMessage.tsx";
-import Button from "../ui/Button/Button.tsx";
-import Input from "../ui/Input/Input.tsx";
-import style from './AddNewTodo.module.css'
+import {FC} from 'react';
+import type { FormProps } from 'antd';
+import { Form, Input, Button } from 'antd';
+import todoApi from "../../api/todoApi.ts";
+import {todoValidationRules} from "../../helpers/validate/todoValidationRules.ts";
 
-interface AddNewTodoProps {
-  updateTodoList: (value: boolean) => void
+type FieldType = {
+  title: string;
+}
+
+type AddNewTodoProps = {
+  updateTodoList: () => Promise<void>
 }
 
 const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
+  const [form] = Form.useForm<FieldType>();
 
-  const [validationResult, setValidationResult] = useState<ValidateResult>({
-    errorMessage: '',
-    isValid: true
-  })
-
-  const newTaskSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setValidationResult(validationInput(e.target.input.value))
-      try {
-        if (validationInput(e.target.input.value).isValid) {
-          await todoApi.addNewTodo(e.target.input.value)
-          e.target.input.value = ''
-          updateTodoList(true)
-          return
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
-        alert(errorMessage)
-        console.error(errorMessage)
-      }
-  }
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+   await todoApi.addNewTodo(values.title)
+    form.resetFields();
+   await updateTodoList()
+  };
 
   return (
-    <form className={style.form} onSubmit={newTaskSubmit}>
-      <div className={style.inputWrapper}>
-        <Input className={style.input} placeholder={'Task To Be Done...'}/>
-        <ValidationMessage className={`${style.validMessage}
-                                       ${!validationResult.isValid ? style.validMessageVisible : ''}`}
-        >{validationResult.errorMessage}</ValidationMessage>
-      </div>
-      <Button className={style.button} type="submit">Add</Button>
-    </form>
+    <Form
+      form={form}
+      layout="inline"
+      size={'large'}
+      style={{ width: '100%', marginBottom: 10}}
+      onFinish={onFinish}
+    >
+      <Form.Item<FieldType>
+        name="title"
+        style={{flex: 1, marginRight: 10}}
+        rules={todoValidationRules}
+      >
+        <Input placeholder={'Task To Be Done...'}/>
+      </Form.Item>
+      <Form.Item style={{ marginRight: 0 }}>
+        <Button style={{width:'110px'}} type="primary" htmlType="submit">
+          Add
+        </Button>
+      </Form.Item>
+    </Form>
   )
 }
 
-export default AddNewTodo
+export default AddNewTodo;

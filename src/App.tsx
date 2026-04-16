@@ -3,7 +3,7 @@ import './variables.css'
 
 const App = () => {
   return (
-    <TodosPage />
+      <TodosPage />
   );
 };
 

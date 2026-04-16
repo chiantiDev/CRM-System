@@ -1,92 +1,73 @@
 import {Todo, TodoRequest, TodoInfo, MetaResponse, TodoStatus} from "../types/todo.ts";
+import axios, {AxiosError} from "axios";
 
 const BASE_URL = 'https://easydev.club/api/v1/'
 
+const handleError = (error: AxiosError) => {
+  const errorMessage = error.message || "Неизвестная ошибка";
+  alert(errorMessage)
+  console.error(errorMessage)
+}
+
 const addNewTodo = async (title: string): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  try {
+    await axios.post(`${BASE_URL}todos`, {
       title: title,
       isDone: false,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+    })
+  } catch (error) {
+    handleError(error as AxiosError);
+    throw error;
   }
 }
 
 const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(updates),
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    await axios.put(`${BASE_URL}todos/${id}`, updates)
+  } catch (error) {
+    handleError(error as AxiosError);
+    throw error;
   }
 }
 
 const deleteTodo = async (id: number): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    await axios.delete(`${BASE_URL}todos/${id}`)
+  } catch (error) {
+    handleError(error as AxiosError);
+    throw error;
   }
 }
 
 const getTodoById = async (id: number): Promise<Todo> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  try {
+    const { data } = await axios.get(`${BASE_URL}todos/${id}`)
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+    return {
+      id: data.id,
+      title: data.title,
+      created: data.created,
+      isDone: data.isDone,
+    };
+  } catch (error) {
+    handleError(error as AxiosError);
+    throw error;
   }
-
-  const result = await response.json();
-
-  return {
-    id: result.id,
-    title: result.title,
-    created: result.created,
-    isDone: result.isDone,
-  };
 }
 
 const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo, TodoInfo>> => {
-  const response = await fetch(`${BASE_URL}todos?filter=${tasksFilter}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
+  try {
+    const { data } = await axios.get(`${BASE_URL}todos?filter=${tasksFilter}`)
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+    return {
+      data: data.data,
+      info: data.info,
+      meta: data.meta,
+    };
+  } catch (error) {
+    handleError(error as AxiosError);
+    throw error;
   }
-
-  const result = await response.json();
-
-  return {
-    data: result.data,
-    info: result.info,
-    meta: result.meta,
-  };
 }
 
 export default {addNewTodo, updateTodo, deleteTodo, getTodoById, getTodosData}

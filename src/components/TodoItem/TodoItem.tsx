@@ -1,130 +1,122 @@
 import * as React from "react";
 import {FC, useState} from "react";
-import {ValidateResult} from "../../types/todo.ts";
 import todoApi from '../../api/todoApi.ts'
-import validationInput from "../../helpers/validate/validationInput.ts";
-import ValidationMessage from "../ui/ValidationMessage/ValidationMessage.tsx";
-import Input from "../ui/Input/Input.tsx";
-import Checkbox from "../ui/CheckBox/Checkbox.tsx";
-import IconButton from "../ui/IconButton/IconButton.tsx";
-import style from "./TodoItem.module.css";
+import {Form, FormProps, Checkbox, CheckboxProps, Input, Button,} from 'antd';
+import {todoValidationRules} from "../../helpers/validate/todoValidationRules.ts";
+import {EditOutlined, DeleteOutlined, SaveOutlined, RollbackOutlined} from '@ant-design/icons';
 
-import editIcon from '/src/assets/icons/buttonIcons/edit.svg';
-import deleteIcon from '/src/assets/icons/buttonIcons/delete.svg';
-import saveIcon from '/src/assets/icons/buttonIcons/save.svg';
-import cancelIcon from '/src/assets/icons/buttonIcons/cancel.svg';
+type FieldType = {
+  checkbox: boolean;
+  input: string;
+}
 
 interface TodoItemProps {
   id: number
   titleTodo: string
   isDone: boolean
-  updateTodoList: (value: boolean) => void
+  updateTodoList: () => Promise<void>
 }
 
 const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
-  const [title, setTitle] = useState<string>(titleTodo)
+  const [form] = Form.useForm<FieldType>();
   const [modeButtons, setModeButtons] = useState<'viewing' | 'editing'>('viewing');
-  const [validationResult, setValidationResult] = useState<ValidateResult>({
-    errorMessage: '',
-    isValid: true
-  })
 
-  const checkedTodo = async (isDone: boolean) => {
-    try {
-      await todoApi.updateTodo(id, {isDone})
-      updateTodoList(true)
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
-      alert(errorMessage)
-      console.error(errorMessage)
-    }
-  }
+  const onChangeCheckbox: CheckboxProps['onChange'] = async (e) => {
+    await todoApi.updateTodo(id, {isDone: e.target.checked})
+    await updateTodoList()
+  };
 
   const editingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setModeButtons('editing')
   }
 
-  const savingEditedTodo = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setValidationResult(validationInput(e.target.input.value))
-    try {
-      if (validationInput(e.target.input.value).isValid) {
-        await todoApi.updateTodo(id, {title: e.target.input.value})
-        setModeButtons('viewing')
-        updateTodoList(true)
-        return
-      }
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
+    await todoApi.updateTodo(id, {title: values.input})
+    setModeButtons('viewing')
+    await updateTodoList()
+  };
 
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
-      alert(errorMessage)
-      console.error(errorMessage)
-    }
-  }
-
-  const cancelEditingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const cancelEditingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    setTitle(titleTodo)
-    setValidationResult({
-      errorMessage: '',
-      isValid: true
-    })
+    form.resetFields();
     setModeButtons('viewing')
   }
 
   const deletingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    try {
-      await todoApi.deleteTodo(id)
-      updateTodoList(true)
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Неизвестная ошибка";
-      alert(errorMessage)
-      console.error(errorMessage)
-    }
+    await todoApi.deleteTodo(id)
+    await updateTodoList()
   }
 
   return (
-    <form className={style.form} onSubmit={savingEditedTodo}>
-      <Checkbox defaultChecked={isDone}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkedTodo(e.target.checked)}
-      />
-      <div className={style.inputWrapper}>
-        <Input className={`
-               ${style.input}
-               ${isDone ? style.isDone: ''}
-               ${modeButtons === 'editing' ? style.activeInput : ''}
-               `}
-               value={title}
-               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+    <Form form={form}
+          layout="inline"
+          size={'large'}
+          style={{
+            alignItems: 'center',
+            width: '100%',
+            marginBottom: 10,
+            border: '1px solid #ccc',
+            borderRadius: '6px',
+            backgroundColor: '#f3f3f3',
+            paddingBlock: '10px',
+          }}
+          initialValues={{
+            input: `${titleTodo}`,
+          }}
+          onFinish={onFinish}>
+
+      <Form.Item<FieldType>
+        name="checkbox"
+        style={{marginInline: 10}}
+      >
+        <Checkbox checked={isDone} onChange={onChangeCheckbox} />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        name="input"
+        style={{flex: 1, marginRight: 10}}
+        rules={todoValidationRules}
+      >
+        <Input styles={{input: isDone ? { textDecoration: 'line-through' } : {}}}
                disabled={modeButtons === 'viewing'}
         />
-        <ValidationMessage className={`${style.validMessage}
-                                       ${!validationResult.isValid ? style.validMessageVisible : ''}`}
-        >{validationResult.errorMessage}</ValidationMessage>
-      </div>
+      </Form.Item>
+
       {modeButtons === 'viewing' &&
         (<>
-          <IconButton className={style.editButton} type={"button"} onClick={editingTodo}>
-            <img width={35} src={editIcon} alt="editing-todo"/>
-          </IconButton>
-          <IconButton className={style.deleteButton} type={"button"} onClick={deletingTodo}>
-            <img width={35} src={deleteIcon} alt="deleting-todo"/>
-          </IconButton>
+          <Form.Item style={{marginRight: 10}}>
+            <Button color="primary" variant="solid"
+                    icon={<EditOutlined style={{fontSize: '26px'}}/>}
+                    onClick={editingTodo}
+            />
+          </Form.Item>
+          <Form.Item style={{marginRight: 10}}>
+            <Button color="danger" variant="outlined"
+                    icon={<DeleteOutlined style={{fontSize: '26px'}}/>}
+                    onClick={deletingTodo}
+            />
+          </Form.Item>
         </>)
       }
       {modeButtons === 'editing' &&
         (<>
-          <IconButton className={style.saveButton} type={"submit"}>
-            <img width={35} src={saveIcon} alt="saving-editin-todo"/>
-          </IconButton>
-          <IconButton className={style.cancelButton} type={"button"} onClick={cancelEditingTodo}>
-            <img width={35} src={cancelIcon} alt="cancel-editing-todo"/>
-          </IconButton>
+          <Form.Item style={{marginRight: 10}}>
+            <Button color="green" variant="solid"
+                    icon={<SaveOutlined style={{fontSize: '26px'}} />}
+                    htmlType="submit"
+            />
+          </Form.Item>
+          <Form.Item style={{marginRight: 10}}>
+            <Button color="primary" variant="outlined"
+                    icon={<RollbackOutlined style={{fontSize: '26px'}}/>}
+                    onClick={cancelEditingTodo}
+            />
+          </Form.Item>
         </>)
       }
-    </form>
+    </Form>
   )
 }
 

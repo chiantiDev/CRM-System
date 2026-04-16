@@ -1,5 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import ruRU from 'antd/locale/ru_RU';
+import { ConfigProvider } from 'antd';
+import { BrowserRouter } from "react-router";
 import App from './App'
 
 const root = document.getElementById('root')
@@ -10,6 +13,10 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
+    <BrowserRouter>
+    <ConfigProvider locale={ruRU}>
+      <App />
+    </ConfigProvider>
+    </BrowserRouter>
+  </StrictMode>
 )
