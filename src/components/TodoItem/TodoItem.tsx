@@ -49,19 +49,27 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
     await updateTodoList()
   }
 
+    const boxStyleForm: React.CSSProperties = {
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 10,
+        boxShadow: '0 0 2px 1px var(--color-shodow)',
+        borderRadius: '6px',
+        backgroundColor: 'var(--color-background-50)',
+        paddingBlock: '10px',
+    }
+
+    const boxStyleInput: React.CSSProperties = {
+        textDecoration: isDone ? 'line-through' : 'none',
+        border: "none",
+        boxShadow: modeButtons === 'editing' ? '0 0 2px 1px var(--color-shodow)' : "none",
+    }
+
   return (
     <Form form={form}
           layout="inline"
           size={'large'}
-          style={{
-            alignItems: 'center',
-            width: '100%',
-            marginBottom: 10,
-            border: '1px solid #ccc',
-            borderRadius: '6px',
-            backgroundColor: '#f3f3f3',
-            paddingBlock: '10px',
-          }}
+          style={boxStyleForm}
           initialValues={{
             input: `${titleTodo}`,
           }}
@@ -79,7 +87,7 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
         style={{flex: 1, marginRight: 10}}
         rules={todoValidationRules}
       >
-        <Input styles={{input: isDone ? { textDecoration: 'line-through' } : {}}}
+        <Input style={boxStyleInput}
                disabled={modeButtons === 'viewing'}
         />
       </Form.Item>

@@ -5,6 +5,9 @@
   --color-danger: #ee6666;
   --color-outline: #757575;
   --color-shodow: rgba(0, 0, 0, 0.4);
-  --color-background: lightslategray;
-  --color-background-alt: aliceblue;
+  --color-background-50: #f4f7fa;
+  --color-background-100: #e6ecf3;
+  --color-background-200: #d3deea;
+  --color-background-300: #b4c9dc;
+  --color-background-400: #90adca;
 }

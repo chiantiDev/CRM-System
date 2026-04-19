@@ -1,10 +1,10 @@
+import * as React from "react";
 import {FC, useEffect, useState} from "react";
+import {TodoStatus, Todo, TodoInfo, MetaResponse} from "../../types/todo.ts"
 import todoApi from '../../api/todoApi.ts'
 import AddNewTodo from "../../components/AddNewTodo/AddNewTodo.tsx";
-import {Button, Space} from "antd";
+import {Button, Flex, Space} from "antd";
 import TodoItem from "../../components/TodoItem/TodoItem.tsx";
-import {TodoStatus, Todo, TodoInfo, MetaResponse} from "../../types/todo.ts"
-import style from './TodosPage.module.css'
 
 const TodosPage: FC = () => {
   const [todoStatus, setTodoStatus] = useState<TodoStatus>('all');
@@ -29,9 +29,21 @@ const TodosPage: FC = () => {
     void loadTodoList()
   }, [todoStatus]);
 
+
+  const boxStyle: React.CSSProperties = {
+    maxWidth: '400px',
+    padding: '30px',
+    backgroundColor: 'var(--color-background-200)',
+    boxShadow: '0 0 5px 0 var(--color-shodow)',
+    borderRadius: '10px',
+  }
+
   return (
-    <main className={style.main}>
-      <section className={style.todo}>
+      <Flex vertical={true}
+            align='center'
+            justify="center"
+            style={boxStyle}
+      >
         <AddNewTodo updateTodoList={loadTodoList}/>
         <Space style={{marginBottom: '10px'}}>
           <Button type='text'
@@ -56,7 +68,6 @@ const TodosPage: FC = () => {
                   onClick={() => {setTodoStatus('completed')}}
           >сделано ({todosData.info.completed})</Button>
         </Space>
-        <div className={style.wrapperTaskList}>
           {todosData.data.map((todo) =>
             <TodoItem key={todo.id}
                       id={todo.id}
@@ -64,9 +75,7 @@ const TodosPage: FC = () => {
                       isDone={todo.isDone}
                       updateTodoList={loadTodoList}
             />)}
-        </div>
-      </section>
-    </main>
+      </Flex>
   )
 }
 
