@@ -1,8 +1,8 @@
 import * as React from "react";
 import {FC, useState} from "react";
-import todoApi from '../../api/todoApi.ts'
+import todoApi from '../api/todoApi.ts'
 import {Form, FormProps, Checkbox, CheckboxProps, Input, Button,} from 'antd';
-import {todoValidationRules} from "../../helpers/validate/todoValidationRules.ts";
+import {todoValidationRules} from "../helpers/todoValidationRules.ts";
 import {EditOutlined, DeleteOutlined, SaveOutlined, RollbackOutlined} from '@ant-design/icons';
 
 type FieldType = {

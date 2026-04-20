@@ -1,8 +1,8 @@
 import {FC} from 'react';
 import type { FormProps } from 'antd';
 import { Form, Input, Button } from 'antd';
-import todoApi from "../../api/todoApi.ts";
-import {todoValidationRules} from "../../helpers/validate/todoValidationRules.ts";
+import todoApi from "../api/todoApi.ts";
+import {todoValidationRules} from "../helpers/todoValidationRules.ts";
 
 type FieldType = {
   title: string;
