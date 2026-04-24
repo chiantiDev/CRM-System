@@ -1,5 +1,5 @@
 import * as React from "react";
-import {FC, useState} from "react";
+import {FC, memo, useState} from "react";
 import todoApi from '../api/todoApi.ts'
 import {Form, FormProps, Checkbox, CheckboxProps, Input, Button,} from 'antd';
 import {todoValidationRules} from "../helpers/todoValidationRules.ts";
@@ -18,6 +18,8 @@ interface TodoItemProps {
 }
 
 const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
+  console.log('item')
+
   const [form] = Form.useForm<FieldType>();
   const [modeButtons, setModeButtons] = useState<'viewing' | 'editing'>('viewing');
 
@@ -128,4 +130,4 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   )
 }
 
-export default TodoItem
+export default memo(TodoItem)

@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, memo} from 'react';
 import type { FormProps } from 'antd';
 import { Form, Input, Button } from 'antd';
 import todoApi from "../api/todoApi.ts";
@@ -13,6 +13,8 @@ type AddNewTodoProps = {
 }
 
 const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
+  console.log('add')
+
   const [form] = Form.useForm<FieldType>();
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -45,4 +47,4 @@ const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
   )
 }
 
-export default AddNewTodo;
+export default memo(AddNewTodo);

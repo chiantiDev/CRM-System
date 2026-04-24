@@ -4,9 +4,23 @@ import {Link, Outlet} from "react-router";
 import {Layout, Flex, Menu} from "antd";
 const { Sider, Content } = Layout;
 import type { MenuProps } from 'antd';
-type MenuItem = Required<MenuProps>['items'][number];
 
 const HomePage: FC = () => {
+  type MenuItem = Required<MenuProps>['items'][number];
+
+  const menuItems: MenuItem[] = [
+    {
+      key: '1',
+      icon: <Link to="/" />,
+      label: 'Todos',
+    },
+    {
+      key: '2',
+      icon: <Link to="profilepage" />,
+      label: 'Profile',
+    },
+  ];
+
   const boxStyleLayout: React.CSSProperties = {
     backgroundColor: 'var(--color-background-400)',
   }
@@ -23,19 +37,6 @@ const HomePage: FC = () => {
     fontSize: '26px',
     textAlign: 'left',
   }
-
-  const menuItems: MenuItem[] = [
-    {
-      key: '1',
-      icon: <Link to="/" />,
-      label: 'Todos',
-    },
-    {
-      key: '2',
-      icon: <Link to="profilepage" />,
-      label: 'Profile',
-    },
-  ];
 
   return (
     <>

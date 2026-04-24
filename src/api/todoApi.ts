@@ -1,7 +1,14 @@
 import {Todo, TodoRequest, TodoInfo, MetaResponse, TodoStatus} from "../types/todo.ts";
 import axios, {AxiosError} from "axios";
 
-const BASE_URL = 'https://easydev.club/api/v1/'
+const apiClient = axios.create({
+  baseURL: 'https://easydev.club/api/v1/',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  }
+});
 
 const handleError = (error: AxiosError) => {
   const errorMessage = error.message || "Неизвестная ошибка";
@@ -11,9 +18,9 @@ const handleError = (error: AxiosError) => {
 
 const addNewTodo = async (title: string): Promise<void> => {
   try {
-    await axios.post(`${BASE_URL}todos`, {
-      title: title,
-      isDone: false,
+    await apiClient.post('todos', {
+        title: title,
+        isDone: false,
     })
   } catch (error) {
     handleError(error as AxiosError);
@@ -23,7 +30,7 @@ const addNewTodo = async (title: string): Promise<void> => {
 
 const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
   try {
-    await axios.put(`${BASE_URL}todos/${id}`, updates)
+    await apiClient.put(`todos/${id}`, updates)
   } catch (error) {
     handleError(error as AxiosError);
     throw error;
@@ -32,7 +39,7 @@ const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
 
 const deleteTodo = async (id: number): Promise<void> => {
   try {
-    await axios.delete(`${BASE_URL}todos/${id}`)
+    await apiClient.delete(`todos/${id}`)
   } catch (error) {
     handleError(error as AxiosError);
     throw error;
@@ -41,7 +48,7 @@ const deleteTodo = async (id: number): Promise<void> => {
 
 const getTodoById = async (id: number): Promise<Todo> => {
   try {
-    const { data } = await axios.get(`${BASE_URL}todos/${id}`)
+    const { data } = await apiClient.get(`todos/${id}`)
 
     return {
       id: data.id,
@@ -57,8 +64,7 @@ const getTodoById = async (id: number): Promise<Todo> => {
 
 const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
-    const { data } = await axios.get(`${BASE_URL}todos?filter=${tasksFilter}`)
-
+    const { data } = await apiClient.get('todos', {params: {filter: tasksFilter}})
     return {
       data: data.data,
       info: data.info,

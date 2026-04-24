@@ -1,5 +1,5 @@
 import * as React from "react";
-import {FC, useEffect, useState} from "react";
+import {FC, useCallback, useEffect, useState} from "react";
 import {TodoStatus, Todo, TodoInfo, MetaResponse} from "../types/todo.ts"
 import todoApi from '../api/todoApi.ts'
 import AddNewTodo from "../components/AddNewTodo.tsx";
@@ -7,31 +7,25 @@ import {Button, Flex, Space} from "antd";
 import TodoItem from "../components/TodoItem.tsx";
 
 const TodosPage: FC = () => {
+  console.log('todo')
+
   const [todoStatus, setTodoStatus] = useState<TodoStatus>('all');
   const [todosData, setTodosData] = useState<MetaResponse<Todo, TodoInfo>>({
     data: [],
-    info: {
-      all: 0,
-      completed: 0,
-      inWork: 0,
-    },
-    meta: {
-      totalAmount: 0,
-    },
+    info: {all: 0, completed: 0, inWork: 0},
+    meta: {totalAmount: 0},
   });
 
-  const loadTodoList = async (): Promise<void> => {
-      const data = await todoApi.getTodosData(todoStatus);
-      setTodosData(data);
-  };
-
-  useEffect(() => {
-    void loadTodoList()
-    const timerTodos = setInterval(loadTodoList, 5000);
-    return () => clearInterval(timerTodos);
+  const loadTodoList  = useCallback(async (): Promise<void> => {
+    const data = await todoApi.getTodosData(todoStatus);
+    setTodosData(data);
   }, [todoStatus]);
 
-
+  useEffect(() => {
+    void loadTodoList();
+    const timerTodos = setInterval(() => {void loadTodoList()}, 5000);
+    return () => clearInterval(timerTodos);
+  }, [loadTodoList]);
 
   const boxStyleTodoPage: React.CSSProperties = {
     maxWidth: '400px',
