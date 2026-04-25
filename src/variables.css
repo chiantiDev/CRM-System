@@ -1,19 +1,10 @@
 :root {
-  --color-background: lightslategray;
-  --color-background-todo: aliceblue;
   --color-primary: dodgerblue;
-  --color-button-filter-active: var(--color-primary);
-  --color-button-filter: #757575;
-  --color-check-box: var(--color-primary);
-  --color-background-check-box: var(--color-primary);
-  --color-edit: var(--color-primary);
-  --color-delete: indianred;
-  --color-save: gold;
-  --color-cancel: dimgray;
-  --color-box-shodow: rgba(0, 0, 0, 0.4);
-  --color-error-message: brown;
-  --color-background-error-message: white;
-  --color-background-input: white;
-  --color-background-form: white;
-  --color-text: white;
+  --color-secondary: white;
+  --color-success: #4eb771;
+  --color-danger: #ee6666;
+  --color-outline: #757575;
+  --color-shodow: rgba(0, 0, 0, 0.4);
+  --color-background: lightslategray;
+  --color-background-alt: aliceblue;
 }

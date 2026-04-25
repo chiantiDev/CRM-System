@@ -1,7 +1,16 @@
-const textValidation = (text) => {
+import {ValidateResult} from "../../types/todo.ts";
+
+const validationInput = (text: string): ValidateResult => {
   if (text.startsWith(" ")) {
     return {
       errorMessage: 'Текст не должен начинаться с пробела',
+      isValid: false
+    };
+  }
+
+  if (text.endsWith(" ")) {
+    return {
+      errorMessage:'Текст не должен заканчиваться пробелом',
       isValid: false
     };
   }
@@ -13,7 +22,7 @@ const textValidation = (text) => {
     };
   }
 
-  if (text.length < 2 || text.length === 2 && text[1] === ' ') {
+  if (text.length < 2) {
     return {
       errorMessage:'Минимальная длина текста 2 символа',
       isValid: false
@@ -34,4 +43,4 @@ const textValidation = (text) => {
 
 };
 
-export default textValidation;
+export default validationInput;
