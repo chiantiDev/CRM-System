@@ -1,5 +1,5 @@
 import {Todo, TodoRequest, TodoInfo, MetaResponse, TodoStatus} from "../types/todo.ts";
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 
 const apiClient = axios.create({
   baseURL: 'https://easydev.club/api/v1/',
@@ -10,11 +10,23 @@ const apiClient = axios.create({
   }
 });
 
-const handleError = (error: AxiosError) => {
-  const errorMessage = error.message || "Неизвестная ошибка";
-  alert(errorMessage)
-  console.error(errorMessage)
+const handleError = (error: unknown) => {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      console.error("Запрос отправлен, сервер ответил ошибкой", error.response.data);
+    } else if (error.request) {
+      console.error("Нету ответа", error.request);
+    } else {
+      console.error("Ошибка настройки запроса", error.message);
+    }
+  } else if (error instanceof Error) {
+    console.error("Ошибка", error);
+  } else {
+    console.error("Ошибка при загрузке данных");
+  }
+  throw new Error('Ошибка при запросе на сервер')
 }
+
 
 const addNewTodo = async (title: string): Promise<void> => {
   try {
@@ -22,8 +34,8 @@ const addNewTodo = async (title: string): Promise<void> => {
         title: title,
         isDone: false,
     })
-  } catch (error) {
-    handleError(error as AxiosError);
+  } catch (error: unknown) {
+    handleError(error);
     throw error;
   }
 }
@@ -31,8 +43,8 @@ const addNewTodo = async (title: string): Promise<void> => {
 const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
   try {
     await apiClient.put(`todos/${id}`, updates)
-  } catch (error) {
-    handleError(error as AxiosError);
+  } catch (error: unknown) {
+    handleError(error);
     throw error;
   }
 }
@@ -40,8 +52,8 @@ const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
 const deleteTodo = async (id: number): Promise<void> => {
   try {
     await apiClient.delete(`todos/${id}`)
-  } catch (error) {
-    handleError(error as AxiosError);
+  } catch (error: unknown) {
+    handleError(error);
     throw error;
   }
 }
@@ -49,15 +61,14 @@ const deleteTodo = async (id: number): Promise<void> => {
 const getTodoById = async (id: number): Promise<Todo> => {
   try {
     const { data } = await apiClient.get(`todos/${id}`)
-
     return {
       id: data.id,
       title: data.title,
       created: data.created,
       isDone: data.isDone,
     };
-  } catch (error) {
-    handleError(error as AxiosError);
+  } catch (error: unknown) {
+    handleError(error);
     throw error;
   }
 }
@@ -70,8 +81,8 @@ const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo,
       info: data.info,
       meta: data.meta,
     };
-  } catch (error) {
-    handleError(error as AxiosError);
+  } catch (error: unknown) {
+    handleError(error);
     throw error;
   }
 }

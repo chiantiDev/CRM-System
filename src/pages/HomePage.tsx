@@ -1,7 +1,7 @@
 import * as React from "react";
 import {FC} from "react";
 import {Link, Outlet} from "react-router";
-import {Layout, Flex, Menu} from "antd";
+import {Layout, Menu} from "antd";
 const { Sider, Content } = Layout;
 import type { MenuProps } from 'antd';
 
@@ -48,12 +48,14 @@ const HomePage: FC = () => {
                 items={menuItems} />
         </Sider>
         <Content>
-          <Flex style={{height: "100vh"}}
-                justify={'center'}
-                align={'center'}
-          >
+          <div style={{
+            display: "flex",
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: "100vh"
+          }}>
             <Outlet/>
-          </Flex>
+          </div>
         </Content>
       </Layout>
     </>

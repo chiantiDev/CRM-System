@@ -1,0 +1,20 @@
+.todoPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    background-color: var(--color-background-200);
+    box-shadow: 0 0 5px 0 var(--color-shodow);
+    border-radius: 10px;
+}
+
+.wrapperTodos {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
+    overflow-y: auto;
+    gap: 10px;
+    padding: 1px 10px 1px 1px;
+
+}

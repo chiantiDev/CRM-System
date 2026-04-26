@@ -18,10 +18,8 @@ interface TodoItemProps {
 }
 
 const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) => {
-  console.log('item')
-
-  const [form] = Form.useForm<FieldType>();
   const [modeButtons, setModeButtons] = useState<'viewing' | 'editing'>('viewing');
+  const [form] = Form.useForm<FieldType>();
 
   const onChangeCheckbox: CheckboxProps['onChange'] = async (e) => {
     await todoApi.updateTodo(id, {isDone: e.target.checked})
@@ -51,60 +49,30 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
     await updateTodoList()
   }
 
-    const boxStyleForm: React.CSSProperties = {
-        alignItems: 'center',
-        width: '100%',
-        marginBottom: 10,
-        boxShadow: '0 0 2px 1px var(--color-shodow)',
-        borderRadius: '6px',
-        backgroundColor: 'var(--color-background-50)',
-        paddingBlock: '10px',
-    }
-
-    const boxStyleInput: React.CSSProperties = {
-        textDecoration: isDone ? 'line-through' : 'none',
-        border: "none",
-        boxShadow: modeButtons === 'editing' ? '0 0 2px 1px var(--color-shodow)' : "none",
-    }
-
   return (
-    <Form form={form}
-          layout="inline"
-          size={'large'}
-          style={boxStyleForm}
-          initialValues={{
-            input: `${titleTodo}`,
-          }}
-          onFinish={onFinish}>
-
-      <Form.Item<FieldType>
-        name="checkbox"
-        style={{marginInline: 10}}
-      >
+    <Form form={form} layout="inline" size={'large'}
+          initialValues={{input: `${titleTodo}`}}
+          onFinish={onFinish}
+    >
+      <Form.Item<FieldType> name="checkbox">
         <Checkbox checked={isDone} onChange={onChangeCheckbox} />
       </Form.Item>
 
-      <Form.Item<FieldType>
-        name="input"
-        style={{flex: 1, marginRight: 10}}
-        rules={todoValidationRules}
-      >
-        <Input style={boxStyleInput}
-               disabled={modeButtons === 'viewing'}
-        />
+      <Form.Item<FieldType> name="input" rules={todoValidationRules}>
+        <Input disabled={modeButtons === 'viewing'} style={{textDecoration: isDone ? 'line-through' : 'none'}}/>
       </Form.Item>
 
       {modeButtons === 'viewing' &&
         (<>
-          <Form.Item style={{marginRight: 10}}>
+          <Form.Item>
             <Button color="primary" variant="solid"
-                    icon={<EditOutlined style={{fontSize: '26px'}}/>}
+                    icon={<EditOutlined />}
                     onClick={editingTodo}
             />
           </Form.Item>
-          <Form.Item style={{marginRight: 10}}>
+          <Form.Item>
             <Button color="danger" variant="outlined"
-                    icon={<DeleteOutlined style={{fontSize: '26px'}}/>}
+                    icon={<DeleteOutlined />}
                     onClick={deletingTodo}
             />
           </Form.Item>
@@ -112,15 +80,15 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
       }
       {modeButtons === 'editing' &&
         (<>
-          <Form.Item style={{marginRight: 10}}>
+          <Form.Item>
             <Button color="green" variant="solid"
-                    icon={<SaveOutlined style={{fontSize: '26px'}} />}
+                    icon={<SaveOutlined />}
                     htmlType="submit"
             />
           </Form.Item>
-          <Form.Item style={{marginRight: 10}}>
+          <Form.Item>
             <Button color="primary" variant="outlined"
-                    icon={<RollbackOutlined style={{fontSize: '26px'}}/>}
+                    icon={<RollbackOutlined />}
                     onClick={cancelEditingTodo}
             />
           </Form.Item>
