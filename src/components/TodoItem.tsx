@@ -22,8 +22,12 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   const [form] = Form.useForm<FieldType>();
 
   const onChangeCheckbox: CheckboxProps['onChange'] = async (e) => {
-    await todoApi.updateTodo(id, {isDone: e.target.checked})
-    await updateTodoList()
+    try {
+      await todoApi.updateTodo(id, {isDone: e.target.checked})
+      await updateTodoList()
+    } catch (error) {
+      alert(`Ошибка запроса: ${error}`)
+    }
   };
 
   const editingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -32,9 +36,13 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   }
 
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-    await todoApi.updateTodo(id, {title: values.input})
-    setModeButtons('viewing')
-    await updateTodoList()
+    try {
+      await todoApi.updateTodo(id, {title: values.input})
+      setModeButtons('viewing')
+      await updateTodoList()
+    } catch (error) {
+      alert(`Ошибка запроса: ${error}`)
+    }
   };
 
   const cancelEditingTodo = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -44,9 +52,13 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, updateTodoList}) =>
   }
 
   const deletingTodo = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    await todoApi.deleteTodo(id)
-    await updateTodoList()
+    try {
+      e.preventDefault()
+      await todoApi.deleteTodo(id)
+      await updateTodoList()
+    } catch (error) {
+      alert(`Ошибка запроса: ${error}`)
+    }
   }
 
   return (

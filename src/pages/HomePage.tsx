@@ -1,4 +1,3 @@
-import * as React from "react";
 import {FC} from "react";
 import {Link, Outlet} from "react-router";
 import {Layout, Menu} from "antd";
@@ -21,44 +20,20 @@ const HomePage: FC = () => {
     },
   ];
 
-  const boxStyleLayout: React.CSSProperties = {
-    backgroundColor: 'var(--color-background-400)',
-  }
-
-  const boxStyleSider: React.CSSProperties = {
-    margin: '10px',
-    borderRadius: '10px',
-    backgroundColor: 'var(--color-background-200)',
-    boxShadow: '0 0 5px 0 var(--color-shodow)',
-  }
-
-  const boxStyleMenu: React.CSSProperties = {
-    backgroundColor: 'inherit',
-    fontSize: '26px',
-    textAlign: 'left',
-  }
-
   return (
-    <>
-      <Layout style={boxStyleLayout}>
-        <Sider style={boxStyleSider}>
-          <Menu style={boxStyleMenu}
-                mode="inline"
+      <Layout>
+        <Sider theme="light">
+          <Menu mode="inline"
                 defaultSelectedKeys={['1']}
-                items={menuItems} />
+                items={menuItems}
+          />
         </Sider>
-        <Content>
-          <div style={{
-            display: "flex",
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: "100vh"
-          }}>
-            <Outlet/>
-          </div>
-        </Content>
+        <Layout>
+          <Content>
+              <Outlet/>
+          </Content>
+        </Layout>
       </Layout>
-    </>
   )
 }
 
