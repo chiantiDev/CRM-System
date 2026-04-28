@@ -10,23 +10,26 @@ const apiClient = axios.create({
   }
 });
 
-const handleError = (error: unknown) => {
+const handleError = (error: unknown): never => {
   if (axios.isAxiosError(error)) {
     if (error.response) {
       console.error("Запрос отправлен, сервер ответил ошибкой", error.response.data);
+      throw new Error("Запрос отправлен, сервер ответил ошибкой")
     } else if (error.request) {
-      console.error("Нету ответа", error.request);
+      console.error("Нету ответа от сервера", error.request);
+      throw new Error("Нету ответа от сервера")
     } else {
-      console.error("Ошибка настройки запроса", error.message);
+      console.error("Ошибка настройки запроса к серверу", error.message);
+      throw new Error("Ошибка настройки запроса к серверу")
     }
   } else if (error instanceof Error) {
-    console.error("Ошибка", error);
+    console.error("Общая ошибка:", error.message);
+    throw new Error(`Произошла ошибка: ${error.message}`)
   } else {
-    console.error("Ошибка при загрузке данных");
+    console.error("Неизвестная ошибка:", error);
+    throw new Error("Произошла неизвестная ошибка")
   }
-  throw new Error('Ошибка при запросе на сервер')
 }
-
 
 const addNewTodo = async (title: string): Promise<void> => {
   try {
@@ -36,7 +39,6 @@ const addNewTodo = async (title: string): Promise<void> => {
     })
   } catch (error: unknown) {
     handleError(error);
-    throw error;
   }
 }
 
@@ -45,7 +47,6 @@ const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
     await apiClient.put(`todos/${id}`, updates)
   } catch (error: unknown) {
     handleError(error);
-    throw error;
   }
 }
 
@@ -54,37 +55,16 @@ const deleteTodo = async (id: number): Promise<void> => {
     await apiClient.delete(`todos/${id}`)
   } catch (error: unknown) {
     handleError(error);
-    throw error;
-  }
-}
-
-const getTodoById = async (id: number): Promise<Todo> => {
-  try {
-    const { data } = await apiClient.get(`todos/${id}`)
-    return {
-      id: data.id,
-      title: data.title,
-      created: data.created,
-      isDone: data.isDone,
-    };
-  } catch (error: unknown) {
-    handleError(error);
-    throw error;
   }
 }
 
 const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
     const { data } = await apiClient.get('todos', {params: {filter: tasksFilter}})
-    return {
-      data: data.data,
-      info: data.info,
-      meta: data.meta,
-    };
+    return data
   } catch (error: unknown) {
-    handleError(error);
-    throw error;
+   return handleError(error);
   }
 }
 
-export default {addNewTodo, updateTodo, deleteTodo, getTodoById, getTodosData}
+export default {addNewTodo, updateTodo, deleteTodo, getTodosData}

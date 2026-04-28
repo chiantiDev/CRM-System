@@ -1,8 +1,7 @@
 import {FC} from "react";
 import {Link, Outlet} from "react-router";
-import {Layout, Menu} from "antd";
+import {Layout, Menu, type MenuProps} from "antd";
 const { Sider, Content } = Layout;
-import type { MenuProps } from 'antd';
 
 const HomePage: FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];
@@ -15,7 +14,7 @@ const HomePage: FC = () => {
     },
     {
       key: '2',
-      icon: <Link to="profilepage" />,
+      icon: <Link to="/profilepage" />,
       label: 'Profile',
     },
   ];

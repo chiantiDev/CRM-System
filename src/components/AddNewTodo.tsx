@@ -1,38 +1,45 @@
 import {FC, memo} from 'react';
 import type { FormProps } from 'antd';
-import { Form, Input, Button } from 'antd';
+import { message, Form, Input, Button } from 'antd';
 import todoApi from "../api/todoApi.ts";
-import {todoValidationRules} from "../helpers/todoValidationRules.ts";
+import {validationLengthTitleTodo} from "../helpers/validationLengthTitleTodo.ts";
 
 type FieldType = {
   title: string;
 }
 
 type AddNewTodoProps = {
-  updateTodoList: () => Promise<void>
+  onUpdate: () => Promise<void>
 }
 
-const AddNewTodo: FC<AddNewTodoProps> = ({updateTodoList}) => {
+const AddNewTodo: FC<AddNewTodoProps> = ({onUpdate}) => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<FieldType>();
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       await todoApi.addNewTodo(values.title)
       form.resetFields();
-      await updateTodoList()
+      await onUpdate()
     } catch (error: unknown) {
-      alert(error)
+      messageApi.open({
+        type: 'error',
+        content: `${error}`,
+      })
     }
   };
 
   return (
-    <Form form={form} layout="inline" size={'large'} onFinish={onFinish}>
-      <Form.Item<FieldType> name="title" rules={todoValidationRules}>
-        <Input placeholder={'Task To Be Done...'}/>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">Add</Button>
-      </Form.Item>
-    </Form>
+    <>
+      {contextHolder}
+      <Form form={form} layout="inline" size={'large'} onFinish={onFinish}>
+        <Form.Item<FieldType> name="title" rules={validationLengthTitleTodo(2, 64)}>
+          <Input placeholder={'Task To Be Done...'}/>
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">Add</Button>
+        </Form.Item>
+      </Form>
+    </>
   )
 }
 

@@ -1,17 +1,8 @@
-import {Routes, Route} from "react-router";
-import HomePage from "./pages/HomePage.tsx";
-import TodosPage from "./pages/TodosPage.tsx";
-import ProfilePage from "./pages/ProfilePage.tsx";
+import { useRoutes } from "react-router";
+import {routes} from "./router";
 
 const App = () => {
-  return (
-      <Routes>
-        <Route path="/" element={<HomePage />}>
-          <Route index element={<TodosPage />} />
-          <Route path="profilepage" element={<ProfilePage />} />
-        </Route>
-      </Routes>
-  )
+  return useRoutes(routes);
 };
 
 export default App;
