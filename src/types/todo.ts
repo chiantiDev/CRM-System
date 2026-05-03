@@ -22,8 +22,3 @@ export interface MetaResponse<T, N> {
     totalAmount: number
   }
 }
-
-export interface ValidateResult {
-  errorMessage: string,
-  isValid: boolean,
-}

@@ -1,10 +1,8 @@
-import TodosPage from "./pages/TodosPage/TodosPage";
-import './variables.css'
+import { useRoutes } from "react-router";
+import {routes} from "./router";
 
 const App = () => {
-  return (
-    <TodosPage />
-  );
+  return useRoutes(routes);
 };
 
 export default App;

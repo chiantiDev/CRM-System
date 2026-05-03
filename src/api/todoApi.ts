@@ -1,92 +1,70 @@
 import {Todo, TodoRequest, TodoInfo, MetaResponse, TodoStatus} from "../types/todo.ts";
+import axios from "axios";
 
-const BASE_URL = 'https://easydev.club/api/v1/'
+const apiClient = axios.create({
+  baseURL: 'https://easydev.club/api/v1/',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  }
+});
+
+const handleError = (error: unknown): never => {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      console.error("Запрос отправлен, сервер ответил ошибкой", error.response.data);
+      throw new Error("Запрос отправлен, сервер ответил ошибкой")
+    } else if (error.request) {
+      console.error("Нету ответа от сервера", error.request);
+      throw new Error("Нету ответа от сервера")
+    } else {
+      console.error("Ошибка настройки запроса к серверу", error.message);
+      throw new Error("Ошибка настройки запроса к серверу")
+    }
+  } else if (error instanceof Error) {
+    console.error("Общая ошибка:", error.message);
+    throw new Error(`Произошла ошибка: ${error.message}`)
+  } else {
+    console.error("Неизвестная ошибка:", error);
+    throw new Error("Произошла неизвестная ошибка")
+  }
+}
 
 const addNewTodo = async (title: string): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      title: title,
-      isDone: false,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    await apiClient.post('todos', {
+        title: title,
+        isDone: false,
+    })
+  } catch (error: unknown) {
+    handleError(error);
   }
 }
 
 const updateTodo = async (id: number, updates: TodoRequest): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(updates),
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    await apiClient.put(`todos/${id}`, updates)
+  } catch (error: unknown) {
+    handleError(error);
   }
 }
 
 const deleteTodo = async (id: number): Promise<void> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    await apiClient.delete(`todos/${id}`)
+  } catch (error: unknown) {
+    handleError(error);
   }
-}
-
-const getTodoById = async (id: number): Promise<Todo> => {
-  const response = await fetch(`${BASE_URL}todos/${id}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
-  }
-
-  const result = await response.json();
-
-  return {
-    id: result.id,
-    title: result.title,
-    created: result.created,
-    isDone: result.isDone,
-  };
 }
 
 const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo, TodoInfo>> => {
-  const response = await fetch(`${BASE_URL}todos?filter=${tasksFilter}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}: ${response.statusText}`);
+  try {
+    const { data } = await apiClient.get('todos', {params: {filter: tasksFilter}})
+    return data
+  } catch (error: unknown) {
+   return handleError(error);
   }
-
-  const result = await response.json();
-
-  return {
-    data: result.data,
-    info: result.info,
-    meta: result.meta,
-  };
 }
 
-export default {addNewTodo, updateTodo, deleteTodo, getTodoById, getTodosData}
+export default {addNewTodo, updateTodo, deleteTodo, getTodosData}
