@@ -2,13 +2,13 @@ import {FC, memo} from 'react';
 import type { FormProps } from 'antd';
 import { message, Form, Input, Button } from 'antd';
 import todoApi from "../api/todoApi.ts";
-import {validationLengthTitleTodo} from "../helpers/validationLengthTitleTodo.ts";
+import {todoTitleRules} from "../helpers/validation/todoTitleRules.ts";
 
 type FieldType = {
   title: string;
 }
 
-type AddNewTodoProps = {
+interface AddNewTodoProps {
   onUpdate: () => Promise<void>
 }
 
@@ -32,7 +32,7 @@ const AddNewTodo: FC<AddNewTodoProps> = ({onUpdate}) => {
     <>
       {contextHolder}
       <Form form={form} layout="inline" size={'large'} onFinish={onFinish}>
-        <Form.Item<FieldType> name="title" rules={validationLengthTitleTodo(2, 64)}>
+        <Form.Item<FieldType> name="title" rules={todoTitleRules}>
           <Input placeholder={'Task To Be Done...'}/>
         </Form.Item>
         <Form.Item>
