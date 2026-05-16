@@ -12,7 +12,7 @@ export interface AuthData {
 }
 
 export interface RefreshToken {
-  refreshToken: string;
+  refreshToken: string | null;
 }
 
 export interface Profile {

@@ -1,29 +1,25 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {createAppAsyncThunk} from "../hook/hook";
-import {UserRegistration, Profile} from "../types/registration"
+import {UserRegistration} from "../types/registration"
 import apiClient from "../api/apiClient.ts";
 import {handleErrorRegistration} from "../api/apiError.ts"
 
-interface RegistrationState {
-  user: Profile | null;
+interface  registrationState {
   isLoading: boolean;
   error: string | null;
 }
 
-const initialState: RegistrationState = {
-  user:  null,
+const initialState: registrationState = {
   isLoading: false,
   error: null,
 };
 
-export const registerUser = createAppAsyncThunk<Profile, UserRegistration>(
-  'registration/registerUser',
+export const registrationUser = createAppAsyncThunk<undefined, UserRegistration>(
+  'registration/registrationUser',
   async (formData, { rejectWithValue }) => {
     try {
-
-      const response = await apiClient.post('/auth/signup', formData);
-      return response.data;
-    } catch (error) {
+      await apiClient.post('/auth/signup', formData);
+    } catch (error: unknown) {
       return rejectWithValue(handleErrorRegistration(error));
     }
   }
@@ -35,15 +31,15 @@ const registrationSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
+      .addCase(registrationUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registrationUser.fulfilled, (state) => {
         state.isLoading = false;
-        state.user = action.payload
+        state.error = null;
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase(registrationUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

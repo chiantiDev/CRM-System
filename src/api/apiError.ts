@@ -1,44 +1,49 @@
 import axios from 'axios';
 
-let message = "Произошла неизвестная ошибка";
-
 export const handleErrorTodo = (error: unknown): never => {
+  let errorMessageTodo = "Произошла неизвестная ошибка";
+
   if (axios.isAxiosError(error)) {
     if (error.response) {
-      message = `Запрос отправлен, сервер ответил ошибкой: ${JSON.stringify(error.response.data)}`;
+      errorMessageTodo = `Запрос отправлен, сервер ответил ошибкой: ${JSON.stringify(error.response.data)}`;
     } else if (error.request) {
-      message = "Нет ответа от сервера. Проверьте соединение.";
+      errorMessageTodo = "Нет ответа от сервера. Проверьте соединение.";
     } else {
-      message = `Ошибка настройки запроса к серверу: ${error.message}`;
+      errorMessageTodo = `Ошибка настройки запроса к серверу: ${error.message}`;
     }
   } else if (error instanceof Error) {
-    message = `Произошла ошибка: ${error.message}`;
+    errorMessageTodo = `Произошла ошибка: ${error.message}`;
   }
-  console.error(message, error);
-  throw new Error(message);
+  console.error(errorMessageTodo, error);
+  throw new Error(errorMessageTodo);
 };
 
-export const handleErrorRegistration = (error: unknown): never => {
+export const handleErrorRegistration = (error: unknown): string => {
+  let errorMessageRegistration = "Произошла неизвестная ошибка";
+
   if (axios.isAxiosError(error)) {
     if (error.response) {
       const status = error.response.status;
       switch (status) {
         case 400:
-          message = 'Ошибка десериализации запроса или неверный ввод';
+          errorMessageRegistration = 'Ошибка десериализации запроса или неверный ввод';
           break;
         case 401:
-          message = 'Неверные учетные данные';
+          errorMessageRegistration = 'Неверные учетные данные';
+          break;
+        case 409:
+          errorMessageRegistration = 'Пользователь уже существует';
           break;
         case 500:
-          message = 'Внутренняя ошибка сервера.';
+          errorMessageRegistration = 'Внутренняя ошибка сервера';
           break;
         default:
-          message = `Необработанный статус ошибки: ${status}`;
+          errorMessageRegistration = `Необработанный статус ошибки: ${status}`;
       }
     } else {
-      message = 'Сетевая ошибка или запрос не дошел до сервера';
+      errorMessageRegistration = 'Сетевая ошибка или запрос не дошел до сервера';
     }
   }
-  console.error(message, error);
-  throw new Error(message);
+  console.error(errorMessageRegistration, error);
+  return errorMessageRegistration;
 }

@@ -9,12 +9,12 @@ const HomePage: FC = () => {
   const menuItems: MenuItem[] = [
     {
       key: '1',
-      icon: <Link to="/" />,
+      icon: <Link to="todo" />,
       label: 'Todos',
     },
     {
       key: '2',
-      icon: <Link to="/profilepage" />,
+      icon: <Link to="profile" />,
       label: 'Profile',
     },
   ];
