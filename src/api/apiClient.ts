@@ -1,72 +1,68 @@
-import { router } from "../router";
-import axios, {AxiosInstance, AxiosResponse} from 'axios';
+import axios, {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, AxiosError} from 'axios';
 import {RefreshToken, Token} from "../types/registration.ts";
 import {message} from "antd";
 
-const BASE_URL = 'https://easydev.club/api/v1/';
-
 const apiClient: AxiosInstance = axios.create({
-  baseURL: BASE_URL,
-  timeout: 10000,
+  baseURL: 'https://easydev.club/api/v1/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
+let accessToken: string | null = null;
+
+export const setInMemoryToken = (token: string | null) => {
+  accessToken = token;
+};
+
 apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+  (config: InternalAxiosRequestConfig) => {
+    if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
-  (error: unknown) => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      const currentRefreshToken = localStorage.getItem('refreshToken');
+
+      if (!currentRefreshToken) {
+        return Promise.reject(error);
+      }
+
       try {
-        const currentRefreshToken = localStorage.getItem('refreshToken');
-
-        if (!currentRefreshToken) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          message.error('Сессия истекла. Пожалуйста, войдите заново.');
-          await router.navigate('/', { replace: true });
-          return Promise.reject(new Error('No refresh token available'));
-        }
-
-        const response = await axios.post<Token, AxiosResponse<Token>, RefreshToken>( `${BASE_URL}auth/refresh`, {
-          refreshToken: currentRefreshToken,
-        });
-
+        const response = await axios.post<Token, AxiosResponse<Token>, RefreshToken>('https://easydev.club/api/v1/auth/refresh', { refreshToken: currentRefreshToken });
         const { accessToken, refreshToken } = response.data;
-
-        localStorage.setItem('accessToken', accessToken);
+        setInMemoryToken(accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         }
 
-        return apiClient(originalRequest);
+        const { store } = await import('../store');
+        const { updateToken } = await import('../store/loginSlice.ts');
+        store.dispatch(updateToken(response.data));
 
-      } catch (refreshError) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        return apiClient(originalRequest);
+      } catch (refreshError: unknown) {
+        const { store } = await import('../store');
+        const { logout } = await import('../store/loginSlice.ts');
+        store.dispatch(logout());
+        setInMemoryToken(null);
         message.error('Сессия истекла. Пожалуйста, войдите заново.');
-        await router.navigate('/', { replace: true });
         return Promise.reject(refreshError);
       }
     }
-
     return Promise.reject(error);
   }
 );

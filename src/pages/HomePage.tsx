@@ -1,38 +1,43 @@
-import {FC} from "react";
-import {Link, Outlet} from "react-router";
+import React from "react";
+import {Link, Outlet, useLocation} from "react-router";
 import {Layout, Menu, type MenuProps} from "antd";
 const { Sider, Content } = Layout;
+import {UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
 
-const HomePage: FC = () => {
+const HomePage: React.FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];
+
+  const location = useLocation();
+  const currentKey = location.pathname.split('/').pop() || 'todo';
 
   const menuItems: MenuItem[] = [
     {
-      key: '1',
-      icon: <Link to="todo" />,
-      label: 'Todos',
+      key: 'todo',
+      icon: <UnorderedListOutlined />,
+      label: <Link to="todo">Список задач</Link>,
     },
     {
-      key: '2',
-      icon: <Link to="profile" />,
-      label: 'Profile',
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: <Link to="profile">Личный кабинет</Link>,
     },
   ];
 
   return (
+    <Layout>
+      <Sider theme="light" collapsible>
+        <Menu
+          mode="inline"
+          selectedKeys={[currentKey]}
+          items={menuItems}
+        />
+      </Sider>
       <Layout>
-        <Sider theme="light">
-          <Menu mode="inline"
-                defaultSelectedKeys={['1']}
-                items={menuItems}
-          />
-        </Sider>
-        <Layout>
-          <Content>
-              <Outlet/>
-          </Content>
-        </Layout>
+        <Content>
+          <Outlet/>
+        </Content>
       </Layout>
+    </Layout>
   )
 }
 

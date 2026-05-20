@@ -18,7 +18,7 @@ export const handleErrorTodo = (error: unknown): never => {
   throw new Error(errorMessageTodo);
 };
 
-export const handleErrorRegistration = (error: unknown): string => {
+export const handleErrorAuthentication = (error: unknown): string => {
   let errorMessageRegistration = "Произошла неизвестная ошибка";
 
   if (axios.isAxiosError(error)) {
@@ -29,10 +29,11 @@ export const handleErrorRegistration = (error: unknown): string => {
           errorMessageRegistration = 'Ошибка десериализации запроса или неверный ввод';
           break;
         case 401:
-          errorMessageRegistration = 'Неверные учетные данные';
+          errorMessageRegistration = 'Неверные учетные данные или токен истек';
           break;
         case 409:
           errorMessageRegistration = 'Пользователь уже существует';
+          console.log(error.response);
           break;
         case 500:
           errorMessageRegistration = 'Внутренняя ошибка сервера';

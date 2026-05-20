@@ -1,11 +1,13 @@
-import {Link, useNavigate} from "react-router";
 import * as React from "react";
+import {Link} from "react-router";
 import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import { authorizationUser } from "../store/authorizationSlice.ts";
-import {Button, Card, Flex, Form, Input, message, Space} from "antd";
-import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import { loginUser } from "../store/loginSlice.ts";
+import {Button, Checkbox, Col, Form, Input, message, Row} from "antd";
 import {loginRules, passwordRules} from "../helpers/validation/registrationRules.ts";
-import {useEffect} from "react";
+import bg from '../accets/auth-bg.jpg'
+import icon from '../accets/iconLogin.jpg'
+import { Typography } from 'antd';
+const { Title, Text } = Typography;
 
 interface authorizationFormValues {
   login: string;
@@ -14,20 +16,12 @@ interface authorizationFormValues {
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { token, isLoading } = useAppSelector((state) => state.authorization);
+  const { isLoading } = useAppSelector((state) => state.authorization);
   const [form] = Form.useForm<authorizationFormValues>();
-
-  useEffect(() => {
-    if (token) {
-      navigate('/', { replace: true });
-    }
-  }, [token, navigate]);
 
   const onFinish = async (values: authorizationFormValues) => {
     try {
-      await dispatch(authorizationUser(values)).unwrap()
-      navigate('/home', { replace: true });
+      await dispatch(loginUser(values)).unwrap()
     } catch (error: unknown) {
       if (typeof error === 'string') {
         message.error(error);
@@ -40,45 +34,88 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <>
-      <Flex justify="center" align="center">
-        <Card style={{width: 500, boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}>
-          <Form form={form}
-                name="authorization"
-                layout="vertical"
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                disabled={isLoading}
+    <Row style={{
+      minHeight: '95vh',
+      minWidth: '90vw',
+      margin: '10px',
+      backgroundColor: '#ffffff',
+      border: '10px solid #fff',
+      borderRadius: '50px',
+    }}>
+      <Col xs={0} md={12}
+           style={{
+             borderRadius: '50px 0 0 50px',
+             background: `#ffffff url(${bg}) no-repeat left center / contain`}}>
+      </Col>
+
+      <Col xs={24} md={12}
+           style={{
+             display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '40px'}}
+      >
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <img src={icon} alt="Logo" style={{ height: '74px' }} />
+          </div>
+
+          <Title level={2} style={{ margin: '0 0 4px 26px' }}>
+            Login to your Account
+          </Title>
+
+          <Text type="secondary" style={{ display: 'block', margin: '0 0 20px 26px' }}>
+            See what is going on with your business
+          </Text>
+
+          <Form
+            form={form}
+            name="authorization"
+            layout="vertical"
+            requiredMark={false}
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            disabled={isLoading}
           >
-            <Form.Item<authorizationFormValues>
-              name="login"
-              label="Логин"
-              rules={loginRules}
-            >
-              <Input prefix={<UserOutlined/>}/>
+            <Form.Item name="login" label="Login" hasFeedback rules={loginRules} style={{ marginBottom: '20px' }}>
+              <Input placeholder="User123" size="large" style={{ borderRadius: '6px' }} />
             </Form.Item>
 
-            <Form.Item<authorizationFormValues>
-              name="password"
-              label="Пароль"
-              rules={passwordRules}
-              hasFeedback
-            >
-              <Input.Password prefix={<LockOutlined/>}/>
+            <Form.Item label="Password" name="password" hasFeedback rules={passwordRules} style={{ marginBottom: 0 }}>
+              <Input.Password placeholder="****************" size="large" style={{ borderRadius: '6px' }} />
             </Form.Item>
-            <Space vertical={false}>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">Войти</Button>
-              </Form.Item>
 
-              <Form.Item>
-                <Button type="default"><Link to="/registration">Регистрация</Link></Button>
-              </Form.Item>
-            </Space>
+            <Form.Item style={{ marginBottom: '24px' }}>
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Form.Item name="remember" valuePropName="checked" noStyle>
+                    <Checkbox>Remember Me</Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Typography.Link style={{ color: '#7f265c', textDecoration: 'none', fontWeight: 500 }}>
+                    Forgot Password?
+                  </Typography.Link>
+                </Col>
+              </Row>
+            </Form.Item>
+
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button type="primary" htmlType="submit" size="large" block
+                      style={{backgroundColor: '#7f265c', borderRadius: '6px', height: '45px'}}>
+                Login
+              </Button>
+            </Form.Item>
           </Form>
-        </Card>
-      </Flex>
-    </>
-  )
+
+          <div style={{ textAlign: 'center', marginTop: '250px' }}>
+            <Text type="secondary">Not Registered Yet?</Text>
+            <Link to="/registration" style={{ color: '#7f265c', fontWeight: 500, textDecoration: 'none' }}>
+              Create an account
+            </Link>
+          </div>
+
+        </div>
+      </Col>
+    </Row>
+  );
 }
 export default LoginPage

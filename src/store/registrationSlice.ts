@@ -2,7 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 import {createAppAsyncThunk} from "../hook/hook";
 import {UserRegistration} from "../types/registration"
 import apiClient from "../api/apiClient.ts";
-import {handleErrorRegistration} from "../api/apiError.ts"
+import {handleErrorAuthentication} from "../api/apiError.ts"
 
 interface  registrationState {
   isLoading: boolean;
@@ -20,7 +20,7 @@ export const registrationUser = createAppAsyncThunk<undefined, UserRegistration>
     try {
       await apiClient.post('/auth/signup', formData);
     } catch (error: unknown) {
-      return rejectWithValue(handleErrorRegistration(error));
+      return rejectWithValue(handleErrorAuthentication(error));
     }
   }
 );

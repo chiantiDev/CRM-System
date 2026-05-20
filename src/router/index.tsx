@@ -1,30 +1,42 @@
-import { createBrowserRouter } from "react-router";
+import {createBrowserRouter, Navigate} from "react-router";
 import HomePage from "../pages/HomePage.tsx";
 import TodosPage from "../pages/TodosPage.tsx";
 import ProfilePage from "../pages/ProfilePage.tsx";
 import LoginPage from "../pages/LoginPage.tsx";
 import RegistrationPage from "../pages/RegistrationPage.tsx";
+import { ProtectedRoute, GuestRoute } from "./ProtectedRoute.tsx";
 
-export const routes = [
+const routes = [
   {
-    path: "/",
-    element: <LoginPage />,
-  },
-  {
-    path: "/registration",
-    element: <RegistrationPage />,
-  },
-  {
-    path: "/home",
-    element: <HomePage />,
+    Component: GuestRoute,
     children: [
       {
-        path: "todo",
-        element: <TodosPage />,
+        path: "/",
+        Component: LoginPage,
       },
       {
-        path: "profile",
-        element: <ProfilePage />,
+        path: "/registration",
+        Component: RegistrationPage,
+      },
+    ],
+  },
+  {
+    Component: ProtectedRoute,
+    children: [
+      {
+        path: "/home",
+        Component: HomePage,
+        children: [
+          {index: true, Component: () => <Navigate to="todo" replace/>},
+          {
+            path: "todo",
+            Component: TodosPage,
+          },
+          {
+            path: "profile",
+            Component: ProfilePage,
+          },
+        ],
       },
     ],
   },
