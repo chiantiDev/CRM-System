@@ -2,7 +2,7 @@ import {createBrowserRouter, Navigate} from "react-router";
 import HomePage from "../pages/HomePage.tsx";
 import TodosPage from "../pages/TodosPage.tsx";
 import ProfilePage from "../pages/ProfilePage.tsx";
-import LoginPage from "../pages/LoginPage.tsx";
+import AuthorizationPage from "../pages/AuthorizationPage.tsx";
 import RegistrationPage from "../pages/RegistrationPage.tsx";
 import { ProtectedRoute, GuestRoute } from "./ProtectedRoute.tsx";
 
@@ -12,7 +12,7 @@ const routes = [
     children: [
       {
         path: "/",
-        Component: LoginPage,
+        Component: AuthorizationPage,
       },
       {
         path: "/registration",

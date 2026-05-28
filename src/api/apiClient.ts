@@ -1,22 +1,25 @@
-import axios, {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, AxiosError} from 'axios';
-import {RefreshToken, Token} from "../types/registration.ts";
-import {message} from "antd";
+import axios, {AxiosInstance, InternalAxiosRequestConfig, AxiosError, AxiosResponse} from 'axios';
+import {accessTokenStorage} from "./tokenStorage.ts";
+import {Token,RefreshToken} from "../types/auth.ts";
+import { store } from '../store'
+import { logout } from '../store/authorization/Slices/authorizationSlice.ts';
 
-const apiClient: AxiosInstance = axios.create({
-  baseURL: 'https://easydev.club/api/v1/',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const BASE_URL = 'https://easydev.club/api/v1/';
+
+export const authApiClient: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: { 'Content-Type': 'application/json' }
 });
 
-let accessToken: string | null = null;
+const apiClient: AxiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: {'Content-Type': 'application/json'},
 
-export const setInMemoryToken = (token: string | null) => {
-  accessToken = token;
-};
+});
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    const accessToken = accessTokenStorage.getToken();
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -29,37 +32,20 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
-      const currentRefreshToken = localStorage.getItem('refreshToken');
-
-      if (!currentRefreshToken) {
-        return Promise.reject(error);
-      }
-
       try {
-        const response = await axios.post<Token, AxiosResponse<Token>, RefreshToken>('https://easydev.club/api/v1/auth/refresh', { refreshToken: currentRefreshToken });
+        const refreshTokenData = localStorage.getItem('refreshToken')
+        const response = await authApiClient.post<Token, AxiosResponse<Token>, RefreshToken>('auth/refresh', { refreshToken: refreshTokenData });
         const { accessToken, refreshToken } = response.data;
-        setInMemoryToken(accessToken);
+        accessTokenStorage.setToken(accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          originalRequest.headers.Authorization = `Bearer ${accessTokenStorage.getToken()}`;
         }
-
-        const { store } = await import('../store');
-        const { updateToken } = await import('../store/loginSlice.ts');
-        store.dispatch(updateToken(response.data));
-
         return apiClient(originalRequest);
       } catch (refreshError: unknown) {
-        const { store } = await import('../store');
-        const { logout } = await import('../store/loginSlice.ts');
-        store.dispatch(logout());
-        setInMemoryToken(null);
-        message.error('Сессия истекла. Пожалуйста, войдите заново.');
+        store.dispatch(logout())
         return Promise.reject(refreshError);
       }
     }

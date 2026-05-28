@@ -1,9 +1,11 @@
 import * as React from "react";
 import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import { registrationUser } from "../store/registrationSlice.ts";
+import { registrationUser } from "../store/registration/Slices/registrationSlice.ts";
 import {Link} from "react-router";
 import {Button, Card, Flex, Form, Input, message, notification, Space} from "antd";
 import {UserOutlined, MailOutlined, PhoneOutlined, LockOutlined} from '@ant-design/icons';
+import { Typography } from 'antd';
+const { Text } = Typography;
 import {
   userNameRules,
   loginRules,
@@ -12,6 +14,7 @@ import {
   emailRules,
   phoneNumberRules,
 } from '../helpers/validation/registrationRules';
+import {selectRegistrationStatus} from "../Modules/registration/selectors.ts";
 
 interface RegisterFormValues {
   username: string;
@@ -24,7 +27,7 @@ interface RegisterFormValues {
 
 const RegistrationPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector((state) => state.registration);
+  const { isLoading } = useAppSelector(selectRegistrationStatus);
   const [form] = Form.useForm<RegisterFormValues>();
   const [api, contextHolder] = notification.useNotification();
 
@@ -36,7 +39,7 @@ const RegistrationPage: React.FC = () => {
         title: 'Регистрация успешна!',
         description: (
           <span>
-            Теперь вы можете <Link to="/" style={{ fontWeight: 'bold' }}>войти в аккаунт</Link>.
+            Теперь вы можете <Link to="/" style={{ fontWeight: 'bold' }} replace>войти в аккаунт</Link>.
           </span>
         ),
         duration: 0
@@ -125,6 +128,11 @@ const RegistrationPage: React.FC = () => {
                 <Button type="default" onClick={() => form.resetFields()}>Сбросить всё</Button>
               </Form.Item>
             </Space>
+
+            <div>
+              <Text type="secondary">вы уже зарегистрированы? </Text>
+              <Link to="/" style={{fontWeight: 500, textDecoration: 'none', color: '#7f265c'}}>Войти</Link>
+            </div>
           </Form>
         </Card>
       </Flex>

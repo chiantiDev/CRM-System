@@ -25,19 +25,15 @@ export interface Profile {
   phoneNumber: string;
 }
 
-export interface ProfileRequest {
-  username: string;
-  email: string;
-  phoneNumber: string;
-}
-
-export interface PasswordRequest {
-  password: string;
-}
-
 export interface Token {
   accessToken: string
   refreshToken: string
+}
+
+export interface TokenStorage {
+  setToken: (newToken: string) => void;
+  getToken: () => string | null;
+  clearToken: () => void;
 }
 
 export type Role = 'admin' | 'user' | 'moderator'

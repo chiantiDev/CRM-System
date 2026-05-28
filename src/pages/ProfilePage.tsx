@@ -1,12 +1,14 @@
 import React, {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import {getProfileUser, logoutUser} from "../store/profileSlice.ts";
+import {getProfileUser, logoutUser} from "../store/profile/Slices/profileSlice.ts";
 import {Button, Card, Space, Typography } from "antd";
+import {selectProfileRequest, selectProfileStatus} from "../Modules/profile/selectors.ts";
 const { Title, Text } = Typography;
 
 const ProfilePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, userProfile  } = useAppSelector((state) => state.profile);
+  const { data: userProfile } = useAppSelector(selectProfileRequest);
+  const { isLoading } = useAppSelector(selectProfileStatus);
 
   useEffect(() => {
     dispatch(getProfileUser())
@@ -17,7 +19,7 @@ const ProfilePage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Загрузка данных профиля...</div>;
+    return
   }
 
   return (

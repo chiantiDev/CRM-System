@@ -1,12 +1,12 @@
 import {configureStore} from "@reduxjs/toolkit";
-import registrationReducer from "./registrationSlice";
-import authReducer from "./loginSlice.ts"
-import profileReducer from "./profileSlice";
+import registrationReducer from "./registration/Slices/registrationSlice.ts";
+import authorizationReducer from "./authorization/Slices/authorizationSlice.ts"
+import profileReducer from "./profile/Slices/profileSlice.ts";
 
 export const store = configureStore({
   reducer: {
     registration: registrationReducer,
-    authorization: authReducer,
+    authorization: authorizationReducer,
     profile: profileReducer,
   }
 });
