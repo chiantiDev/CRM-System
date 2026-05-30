@@ -1,9 +1,8 @@
 import React from "react";
 import {Link, Outlet, useLocation} from "react-router";
 import {Layout, Menu, type MenuProps} from "antd";
-import {UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
-
 const { Sider, Content } = Layout;
+import {ScheduleOutlined, UserOutlined, ProfileOutlined} from "@ant-design/icons";
 
 const HomePage: React.FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];
@@ -14,13 +13,18 @@ const HomePage: React.FC = () => {
   const menuItems: MenuItem[] = [
     {
       key: 'todo',
-      icon: <UnorderedListOutlined />,
+      icon: <ScheduleOutlined />,
       label: <Link to="todo">Список задач</Link>,
     },
     {
       key: 'profile',
-      icon: <UserOutlined />,
+      icon: <ProfileOutlined />,
       label: <Link to="profile">Личный кабинет</Link>,
+    },
+    {
+      key: 'users',
+      icon: <UserOutlined />,
+      label: <Link to="users">Пользователи</Link>,
     },
   ];
 
