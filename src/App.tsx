@@ -1,9 +1,8 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {RouterProvider} from "react-router";
 import {router} from '@/router';
 import {useAppDispatch, useAppSelector} from '@/hook/hook';
 import {checkAuthSession} from '@/store/authorization/Slices/authorizationSlice';
-import {ConfigProvider, Spin} from 'antd';
 import {selectAuthSessionStatus, selectLoginStatus} from "@/Modules/authorization/selectors";
 
 const App: React.FC = () => {
@@ -16,13 +15,7 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#7f265c',
-        },
-      }}
-    >
+    <>
       {isLoadingOrIdle || isLoading ? (
         <div style={{
           display: 'flex',
@@ -37,7 +30,7 @@ const App: React.FC = () => {
       ) : (
         <RouterProvider router={router} />
       )}
-    </ConfigProvider>
+    </>
   )
 
 };

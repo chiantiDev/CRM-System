@@ -11,7 +11,10 @@ const HomePage: React.FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];
 
   const location = useLocation();
-  const currentKey = location.pathname.split('/').pop() || 'todo';
+  let currentKey = 'todo';
+  if (location.pathname.includes('/home/todo')) currentKey = 'todo';
+  if (location.pathname.includes('/home/profile')) currentKey = 'profile';
+  if (location.pathname.includes('/home/users') || location.pathname.includes('/home/user')) currentKey = 'users';
 
   const dispatch = useAppDispatch();
   useEffect(() => {

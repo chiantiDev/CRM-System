@@ -1,7 +1,8 @@
 // import { StrictMode } from 'react'
-import {createRoot} from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import {Provider} from "react-redux";
 import {store} from "@/store";
+import {ConfigProvider} from "antd";
 import App from "@/App";
 
 const root = document.getElementById('root')
@@ -12,8 +13,16 @@ if (!root) {
 
 createRoot(root).render(
   // <StrictMode>
+  <ConfigProvider
+    theme={{
+      token: {
+        colorPrimary: '#7f265c',
+      },
+    }}
+  >
     <Provider store={store}>
-      <App />
+      <App/>
     </Provider>
+  </ConfigProvider>
   // </StrictMode>
 )
