@@ -1,8 +1,8 @@
 import {FC, memo} from 'react';
-import type { FormProps } from 'antd';
-import { message, Form, Input, Button } from 'antd';
-import todoApi from "../api/todoApi.ts";
-import {todoTitleRules} from "../helpers/validation/todoTitleRules.ts";
+import type {FormProps} from 'antd';
+import {Button, Form, Input, message} from 'antd';
+import todoApi from "@/api/todoApi";
+import {todoTitleRules} from "@/helpers/validation/todoTitleRules";
 
 type FieldType = {
   title: string;

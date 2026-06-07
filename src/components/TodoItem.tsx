@@ -1,8 +1,8 @@
 import {FC, memo, useState} from "react";
-import todoApi from '../api/todoApi.ts'
-import { message, Form, FormProps, Checkbox, CheckboxProps, Input, Button,} from 'antd';
-import {todoTitleRules} from "../helpers/validation/todoTitleRules.ts";
-import {EditOutlined, DeleteOutlined, SaveOutlined, RollbackOutlined} from '@ant-design/icons';
+import todoApi from '@/api/todoApi'
+import {Button, Checkbox, CheckboxProps, Form, FormProps, Input, message,} from 'antd';
+import {todoTitleRules} from "@/helpers/validation/todoTitleRules";
+import {DeleteOutlined, EditOutlined, RollbackOutlined, SaveOutlined} from '@ant-design/icons';
 
 type FieldType = {
   checkbox: boolean;

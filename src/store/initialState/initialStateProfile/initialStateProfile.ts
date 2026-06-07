@@ -1,5 +1,5 @@
-import { IAsyncParticle, initAsyncParticle } from "../../utils.ts";
-import { Profile } from "../../../types/auth.ts";
+import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
+import {Profile} from "@/types/auth";
 
 export interface ProfileState {
   profile: IAsyncParticle<Profile>;

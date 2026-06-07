@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {TodoInfo, TodoStatus} from "../types/todo.ts";
+import {TodoInfo, TodoStatus} from "@/types/todo";
 import {Menu, type MenuProps} from 'antd';
 
 interface TabsFilterTodoProps {

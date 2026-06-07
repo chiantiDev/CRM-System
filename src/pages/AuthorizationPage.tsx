@@ -1,14 +1,14 @@
 import * as React from "react";
 import {Link} from "react-router";
-import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import { loginUser } from "../store/authorization/Slices/authorizationSlice.ts";
-import {Button, Checkbox, Col, Form, Input, message, Row} from "antd";
-import { Typography } from 'antd';
+import {useAppDispatch, useAppSelector} from "@/hook/hook";
+import {loginUser} from "@/store/authorization/Slices/authorizationSlice";
+import {Button, Checkbox, Col, Form, Input, message, Row, Typography} from "antd";
+import {loginRules, passwordRules} from "@/helpers/validation/registrationRules";
+import bg from '@/accets/auth-bg.jpg'
+import icon from '@/accets/iconLogin.jpg'
+import {selectAuthSessionStatus} from "@/Modules/authorization/selectors";
+
 const { Title, Text } = Typography;
-import {loginRules, passwordRules} from "../helpers/validation/registrationRules.ts";
-import bg from '../accets/auth-bg.jpg'
-import icon from '../accets/iconLogin.jpg'
-import {selectAuthSessionStatus} from "../Modules/authorization/selectors.ts";
 
 interface authorizationFormValues {
   login: string;
@@ -53,11 +53,11 @@ const AuthorizationPage: React.FC = () => {
             </div>
 
             <Title level={2} style={{ margin: '0 0 4px 26px' }}>
-              Login to your Account
+              Войдите в свой аккаунт
             </Title>
 
             <Text type="secondary" style={{ display: 'block', margin: '0 0 20px 26px' }}>
-              See what is going on with your business
+              Узнайте, что происходит с вашим бизнесом.
             </Text>
 
             <Form
@@ -71,11 +71,11 @@ const AuthorizationPage: React.FC = () => {
               disabled={isSessionLoading}
               autoComplete="off"
             >
-              <Form.Item name="login" label="Login" hasFeedback rules={loginRules} style={{ marginBottom: '20px' }}>
-                <Input placeholder="User123" size="large" style={{ borderRadius: '6px' }} />
+              <Form.Item name="login" label="Логин" hasFeedback rules={loginRules} style={{ marginBottom: '20px' }}>
+                <Input placeholder="user123" size="large" style={{ borderRadius: '6px' }} />
               </Form.Item>
 
-              <Form.Item label="Password" name="password" hasFeedback rules={passwordRules} style={{ marginBottom: 0 }}>
+              <Form.Item name="password" label="Пароль" hasFeedback rules={passwordRules} style={{ marginBottom: 0 }}>
                 <Input.Password placeholder="****************" size="large" style={{ borderRadius: '6px' }} />
               </Form.Item>
 
@@ -83,12 +83,12 @@ const AuthorizationPage: React.FC = () => {
                 <Row justify="space-between" align="middle">
                   <Col>
                     <Form.Item name="remember" valuePropName="checked" noStyle>
-                      <Checkbox>Remember Me</Checkbox>
+                      <Checkbox>Запомнить меня</Checkbox>
                     </Form.Item>
                   </Col>
                   <Col>
                     <Typography.Link style={{ color: '#7f265c', textDecoration: 'none', fontWeight: 500 }}>
-                      Forgot Password?
+                      Забыли пароль?
                     </Typography.Link>
                   </Col>
                 </Row>
@@ -97,15 +97,15 @@ const AuthorizationPage: React.FC = () => {
               <Form.Item style={{ marginBottom: 0 }}>
                 <Button type="primary" htmlType="submit" size="large" block
                         style={{backgroundColor: '#7f265c', borderRadius: '6px', height: '45px'}}>
-                  Login
+                  Войти
                 </Button>
               </Form.Item>
             </Form>
 
             <div style={{ textAlign: 'center', marginTop: '250px' }}>
-              <Text type="secondary">Not Registered Yet? </Text>
+              <Text type="secondary">Ещё не зарегистрированы?  </Text>
               <Link to="/registration" style={{ color: '#7f265c', fontWeight: 500, textDecoration: 'none' }}>
-                Create an account
+                Создайте аккаунт
               </Link>
             </div>
 

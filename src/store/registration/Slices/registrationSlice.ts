@@ -1,10 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {createAppAsyncThunk} from "../../../hook/hook.ts";
-import {UserRegistration} from "../../../types/auth.ts"
-import apiClient from "../../../api/apiClient.ts";
-import {handleErrorAuthentication} from "../../../api/apiError.ts"
-import {initialState} from "../../initialState/initialStateRegistration/initialStateRegistration.ts";
-import {addAsyncBuilderCases} from "../../utils.ts";
+import {createAppAsyncThunk} from "@/hook/hook";
+import {UserRegistration} from "@/types/auth"
+import apiClient from "@/api/apiClient";
+import {handleErrorAuthentication} from "@/api/apiError"
+import {initialState} from "@/store/initialState/initialStateRegistration/initialStateRegistration";
+import {addAsyncBuilderCases} from "@/store/utils";
 
 export const registrationUser = createAppAsyncThunk<void, UserRegistration>(
   'registration/registrationUser',

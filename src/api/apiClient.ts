@@ -1,8 +1,8 @@
-import axios, {AxiosInstance, InternalAxiosRequestConfig, AxiosError, AxiosResponse} from 'axios';
-import {accessTokenStorage} from "./tokenStorage.ts";
-import {Token,RefreshToken} from "../types/auth.ts";
-import { store } from '../store'
-import { logout } from '../store/authorization/Slices/authorizationSlice.ts';
+import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import {accessTokenStorage} from "@/api/tokenStorage";
+import {RefreshToken, Token} from "@/types/auth";
+import {store} from '@/store'
+import {logout} from '@/store/authorization/Slices/authorizationSlice';
 
 const BASE_URL = 'https://easydev.club/api/v1/';
 

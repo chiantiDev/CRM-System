@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {RouterProvider} from "react-router";
-import { router } from './router';
-import {useAppDispatch, useAppSelector} from './hook/hook';
-import { checkAuthSession } from './store/authorization/Slices/authorizationSlice.ts';
+import {router} from '@/router';
+import {useAppDispatch, useAppSelector} from '@/hook/hook';
+import {checkAuthSession} from '@/store/authorization/Slices/authorizationSlice';
 import {ConfigProvider, Spin} from 'antd';
-import {selectAuthSessionStatus, selectLoginStatus} from "./Modules/authorization/selectors.ts";
+import {selectAuthSessionStatus, selectLoginStatus} from "@/Modules/authorization/selectors";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();

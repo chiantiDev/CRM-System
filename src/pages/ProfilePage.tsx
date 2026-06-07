@@ -1,8 +1,9 @@
 import React, {useEffect} from "react";
-import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import {getProfileUser, logoutUser} from "../store/profile/Slices/profileSlice.ts";
-import {Button, Card, Space, Typography } from "antd";
-import {selectProfileRequest, selectProfileStatus} from "../Modules/profile/selectors.ts";
+import {useAppDispatch, useAppSelector} from "@/hook/hook";
+import {getProfileUser, logoutUser} from "@/store/profile/Slices/profileSlice";
+import {Button, Card, Space, Typography} from "antd";
+import {selectProfileRequest, selectProfileStatus} from "@/Modules/profile/selectors";
+
 const { Title, Text } = Typography;
 
 const ProfilePage: React.FC = () => {

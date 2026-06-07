@@ -1,20 +1,20 @@
 import * as React from "react";
-import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import { registrationUser } from "../store/registration/Slices/registrationSlice.ts";
+import {useAppDispatch, useAppSelector} from "@/hook/hook";
+import {registrationUser} from "@/store/registration/Slices/registrationSlice";
 import {Link} from "react-router";
-import {Button, Card, Flex, Form, Input, message, notification, Space} from "antd";
-import {UserOutlined, MailOutlined, PhoneOutlined, LockOutlined} from '@ant-design/icons';
-import { Typography } from 'antd';
-const { Text } = Typography;
+import {Button, Card, Flex, Form, Input, message, notification, Space, Typography} from "antd";
+import {LockOutlined, MailOutlined, PhoneOutlined, UserOutlined} from '@ant-design/icons';
 import {
-  userNameRules,
-  loginRules,
-  passwordRules,
   confirmPasswordRules,
   emailRules,
+  loginRules,
+  passwordRules,
   phoneNumberRules,
-} from '../helpers/validation/registrationRules';
-import {selectRegistrationStatus} from "../Modules/registration/selectors.ts";
+  userNameRules,
+} from '@/helpers/validation/registrationRules';
+import {selectRegistrationStatus} from "@/Modules/registration/selectors";
+
+const { Text } = Typography;
 
 interface RegisterFormValues {
   username: string;

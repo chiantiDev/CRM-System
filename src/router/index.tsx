@@ -1,10 +1,10 @@
 import {createBrowserRouter, Navigate} from "react-router";
-import HomePage from "../pages/HomePage.tsx";
-import TodosPage from "../pages/TodosPage.tsx";
-import ProfilePage from "../pages/ProfilePage.tsx";
-import AuthorizationPage from "../pages/AuthorizationPage.tsx";
-import RegistrationPage from "../pages/RegistrationPage.tsx";
-import { ProtectedRoute, GuestRoute } from "./ProtectedRoute.tsx";
+import HomePage from "@/pages/HomePage";
+import TodosPage from "@/pages/TodosPage";
+import ProfilePage from "@/pages/ProfilePage";
+import AuthorizationPage from "@/pages/AuthorizationPage";
+import RegistrationPage from "@/pages/RegistrationPage";
+import {GuestRoute, ProtectedRoute} from "@/router/ProtectedRoute";
 
 const routes = [
   {

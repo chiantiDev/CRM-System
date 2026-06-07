@@ -1,13 +1,13 @@
-import {createAppAsyncThunk} from "../../../hook/hook.ts";
+import {createAppAsyncThunk} from "@/hook/hook";
 import {AxiosResponse} from "axios";
-import {authApiClient} from "../../../api/apiClient.ts";
-import {AuthData, Token, RefreshToken} from "../../../types/auth.ts";
+import {authApiClient} from "@/api/apiClient";
+import {AuthData, RefreshToken, Token} from "@/types/auth";
 import {createSlice} from "@reduxjs/toolkit";
-import {logoutUser} from "../../profile/Slices/profileSlice.ts";
-import {accessTokenStorage} from "../../../api/tokenStorage.ts";
-import {handleErrorAuthentication} from "../../../api/apiError.ts";
-import {addAsyncBuilderCases, initAsyncParticle} from "../../utils.ts";
-import {initialStateAuthorization} from "../../initialState/initialStateAuthorization/initialStateAuthorization.ts";
+import {logoutUser} from "@/store/profile/Slices/profileSlice";
+import {accessTokenStorage} from "@/api/tokenStorage";
+import {handleErrorAuthentication} from "@/api/apiError";
+import {addAsyncBuilderCases, initAsyncParticle} from "@/store/utils";
+import {initialStateAuthorization} from "@/store/initialState/initialStateAuthorization/initialStateAuthorization";
 
 export const checkAuthSession = createAppAsyncThunk<Token, void, { rejectValue: string }>(
   'authorization/checkAuthSession',

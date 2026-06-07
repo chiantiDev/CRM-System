@@ -1,5 +1,5 @@
-import { IAsyncParticle, initAsyncParticle } from "../../utils.ts";
-import { Token } from "../../../types/auth.ts";
+import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
+import {Token} from "@/types/auth";
 
 export interface AuthState {
   session: IAsyncParticle<Token>;

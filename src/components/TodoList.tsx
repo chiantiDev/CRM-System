@@ -1,6 +1,6 @@
 import {FC} from "react";
-import {MetaResponse, Todo, TodoInfo} from "../types/todo.ts";
-import TodoItem from "./TodoItem.tsx";
+import {MetaResponse, Todo, TodoInfo} from "@/types/todo";
+import TodoItem from "@/components/TodoItem";
 
 interface TodoListProps {
   todosData: MetaResponse<Todo, TodoInfo>,

@@ -1,6 +1,6 @@
-import apiClient from "./apiClient.ts";
-import {handleErrorTodo} from "./apiError.ts"
-import {Todo, TodoRequest, TodoInfo, MetaResponse, TodoStatus} from "../types/todo.ts";
+import apiClient from "@/api/apiClient";
+import {handleErrorTodo} from "@/api/apiError"
+import {MetaResponse, Todo, TodoInfo, TodoRequest, TodoStatus} from "@/types/todo";
 
 const addNewTodo = async (title: string): Promise<void> => {
   try {

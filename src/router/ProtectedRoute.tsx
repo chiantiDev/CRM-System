@@ -1,7 +1,7 @@
 import React from 'react';
 import {Navigate, Outlet} from "react-router";
-import {useAppSelector} from "../hook/hook.ts";
-import {selectIsAuth} from "../Modules/authorization/selectors.ts";
+import {useAppSelector} from "@/hook/hook";
+import {selectIsAuth} from "@/Modules/authorization/selectors";
 
 export const ProtectedRoute: React.FC = () => {
   const isAuth = useAppSelector(selectIsAuth);

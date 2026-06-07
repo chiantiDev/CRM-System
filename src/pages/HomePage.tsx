@@ -1,8 +1,9 @@
 import React from "react";
 import {Link, Outlet, useLocation} from "react-router";
 import {Layout, Menu, type MenuProps} from "antd";
-const { Sider, Content } = Layout;
 import {UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+
+const { Sider, Content } = Layout;
 
 const HomePage: React.FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];

@@ -1,11 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {createAppAsyncThunk} from "../../../hook/hook.ts";
-import apiClient from "../../../api/apiClient.ts";
-import {Profile} from "../../../types/auth.ts"
-import {handleErrorAuthentication} from "../../../api/apiError.ts"
+import {createAppAsyncThunk} from "@/hook/hook";
+import apiClient from "@/api/apiClient";
+import {Profile} from "@/types/auth"
+import {handleErrorAuthentication} from "@/api/apiError"
 import {AxiosResponse} from "axios";
-import {initialState} from "../../initialState/initialStateProfile/initialStateProfile.ts";
-import {addAsyncBuilderCases} from "../../utils.ts";
+import {initialState} from "@/store/initialState/initialStateProfile/initialStateProfile";
+import {addAsyncBuilderCases} from "@/store/utils";
 
 export const getProfileUser = createAppAsyncThunk<Profile, void>(
   'profile/getProfileUser',

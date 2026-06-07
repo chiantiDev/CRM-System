@@ -1,4 +1,4 @@
-import { IAsyncParticle, initAsyncParticle } from "../../utils.ts";
+import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
 
 export interface registrationState {
   registration: IAsyncParticle<void>;

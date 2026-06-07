@@ -1,4 +1,4 @@
-import type { Rule } from 'antd/es/form';
+import type {Rule} from 'antd/es/form';
 
 const LIMITS = {
   TODO_TITLE: { MIN: 1, MAX: 60 },
