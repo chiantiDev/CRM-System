@@ -1,8 +1,8 @@
 import {FC, memo, useState} from "react";
-import todoApi from '../api/todoApi.ts'
-import { message, Form, FormProps, Checkbox, CheckboxProps, Input, Button,} from 'antd';
-import {validationLengthTitleTodo} from "../helpers/validationLengthTitleTodo.ts";
-import {EditOutlined, DeleteOutlined, SaveOutlined, RollbackOutlined} from '@ant-design/icons';
+import todoApi from '@/api/todoApi'
+import {Button, Checkbox, CheckboxProps, Form, FormProps, Input, message,} from 'antd';
+import {todoTitleRules} from "@/helpers/validation/todoTitleRules";
+import {DeleteOutlined, EditOutlined, RollbackOutlined, SaveOutlined} from '@ant-design/icons';
 
 type FieldType = {
   checkbox: boolean;
@@ -72,7 +72,7 @@ const TodoItem: FC<TodoItemProps> = ({id, titleTodo, isDone, onUpdate}) => {
           <Checkbox checked={isDone} onChange={onChangeStatusTodo} />
         </Form.Item>
 
-        <Form.Item<FieldType> name="input" rules={validationLengthTitleTodo(2, 64)}>
+        <Form.Item<FieldType> name="input" rules={todoTitleRules}>
           <Input disabled={!isEdit} style={{textDecoration: isDone ? 'line-through' : 'none'}}/>
         </Form.Item>
 

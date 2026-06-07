@@ -1,0 +1,39 @@
+export interface UserRegistration {
+  login: string;
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber: string | undefined;
+}
+
+export interface AuthData {
+  login: string;
+  password: string;
+}
+
+export interface RefreshToken {
+  refreshToken: string | null;
+}
+
+export interface Profile {
+  id: number;
+  username: string;
+  email: string;
+  date: string;
+  isBlocked: boolean;
+  roles: Role[];
+  phoneNumber: string;
+}
+
+export interface Token {
+  accessToken: string
+  refreshToken: string
+}
+
+export interface TokenStorage {
+  setToken: (newToken: string) => void;
+  getToken: () => string | null;
+  clearToken: () => void;
+}
+
+export type Role = 'admin' | 'user' | 'moderator'

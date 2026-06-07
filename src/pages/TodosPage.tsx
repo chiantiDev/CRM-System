@@ -1,10 +1,10 @@
 import {FC, useCallback, useEffect, useRef, useState} from "react";
-import {TodoStatus, Todo, TodoInfo, MetaResponse} from "../types/todo.ts"
+import {MetaResponse, Todo, TodoInfo, TodoStatus} from "@/types/todo"
 import {message} from "antd";
-import todoApi from '../api/todoApi.ts'
-import AddNewTodo from "../components/AddNewTodo.tsx";
-import MenuFilterTodo from "../components/MenuFilterTodo.tsx";
-import TodoList from "../components/TodoList.tsx";
+import todoApi from '@/api/todoApi'
+import AddNewTodo from "@/components/AddNewTodo";
+import MenuFilterTodo from "@/components/MenuFilterTodo";
+import TodoList from "@/components/TodoList";
 
 
 const TodosPage: FC = () => {
