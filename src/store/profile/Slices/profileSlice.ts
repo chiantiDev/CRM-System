@@ -4,7 +4,7 @@ import apiClient from "@/api/apiClient";
 import {Profile} from "@/types/auth"
 import {handleErrorAuthentication} from "@/api/apiError"
 import {AxiosResponse} from "axios";
-import {initialState} from "@/store/initialState/initialStateProfile/initialStateProfile";
+import {initialState} from "@/store/initialState/profile/initialStateProfile";
 import {addAsyncBuilderCases} from "@/store/utils";
 
 export const getProfileUser = createAppAsyncThunk<Profile, void>(

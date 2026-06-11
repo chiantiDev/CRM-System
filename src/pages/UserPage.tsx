@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Link, useParams} from "react-router";
-import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import {selectUserRequest} from "../Modules/user/selectors.ts";
-import {getUser, updateUser} from "../store/user/Slice/userSlice.ts";
+import {useAppDispatch, useAppSelector} from "@/hook/hook";
+import {selectUserRequest} from "@/Modules/user/userSelectors.ts";
+import {getUser, updateUser} from "@/store/user/Slice/userSlice";
 import {FormProps, Space} from 'antd';
 import {Form, Input, Button, message} from "antd";
-import {selectUserStatus} from "../Modules/user/selectors.ts";
-import {emailRules, phoneNumberRules, userNameRules} from "../helpers/validation/registrationRules.ts";
+import {selectUserStatus} from "@/Modules/user/userSelectors.ts";
+import {emailRules, phoneNumberRules, userNameRules} from "@/helpers/validation/registrationRules";
+import {UserRequest} from "@/types/users.ts";
 
 const UserPage: React.FC = () => {
   const {id} = useParams<{ id: string }>();
@@ -20,24 +21,18 @@ const UserPage: React.FC = () => {
     id ? dispatch(getUser(id)) : null;
   }, [dispatch]);
 
-  type FieldType = {
-    username: string;
-    email: string;
-    phoneNumber: string;
-  };
-
-  const onFinish: FormProps<FieldType>['onFinish'] = async (updateUserData) => {
+  const onFinish: FormProps<UserRequest>['onFinish'] = async (updateUserData) => {
     setIsEdit(false)
     if (!id) return;
     try {
       await dispatch(updateUser({id, updateUserData})).unwrap();
       await messageApi.success('Данные успешно обновлены');
-    } catch (error) {
-      messageApi.error('Ошибка при обновлении данных');
+    } catch (error: unknown) {
+
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = () => {
+  const onFinishFailed: FormProps<UserRequest>['onFinishFailed'] = () => {
     messageApi.error('Пожалуйста, исправьте ошибки в форме');
   };
 
@@ -56,15 +51,15 @@ const UserPage: React.FC = () => {
                   email: userData?.email,
                   phoneNumber: userData?.phoneNumber || 'Не указан',
                 }}>
-            <Form.Item<FieldType> label="Имя пользователя" name="username" rules={userNameRules}>
+            <Form.Item<UserRequest> label="Имя пользователя" name="username" rules={userNameRules}>
               <Input/>
             </Form.Item>
 
-            <Form.Item<FieldType> label="Email пользователя" name="email" rules={emailRules}>
+            <Form.Item<UserRequest> label="Email пользователя" name="email" rules={emailRules}>
               <Input/>
             </Form.Item>
 
-            <Form.Item<FieldType> label="Номер телефона" name="phoneNumber" rules={phoneNumberRules}>
+            <Form.Item<UserRequest> label="Номер телефона" name="phoneNumber" rules={phoneNumberRules}>
               <Input/>
             </Form.Item>
 

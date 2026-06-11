@@ -3,11 +3,10 @@ export interface UserFilters {
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   isBlocked?: boolean;
-  limit?: number;  // сколько на странице
-  page?: number;  // страницу
+  limit?: number;
+  page?: number;
 }
 
-// Интерфейс пользователя
 export interface User {
   id: number;
   username: string;
@@ -17,7 +16,6 @@ export interface User {
   roles: Roles[];
   phoneNumber: string;
 }
-// Интерфейс метаинформации
 
 export interface MetaResponse<T> {
   data: T[]
@@ -34,7 +32,6 @@ export interface UserRolesRequest {
 // старые + новые - roles: ['ADMIN', 'MODERATOR']
 }
 
-// Интерфейс для обновления данных пользователя
 export interface UserRequest{
   username?: string;
   email?: string;

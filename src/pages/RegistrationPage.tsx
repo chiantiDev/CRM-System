@@ -12,7 +12,7 @@ import {
   phoneNumberRules,
   userNameRules,
 } from '@/helpers/validation/registrationRules';
-import {selectRegistrationStatus} from "@/Modules/registration/selectors";
+import {selectRegistrationStatus} from "@/Modules/registration/registrationSelectors.ts";
 
 const { Text } = Typography;
 

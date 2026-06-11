@@ -3,9 +3,9 @@ import {Link, Outlet, useLocation} from "react-router";
 import {Layout, Menu, type MenuProps} from "antd";
 const { Sider, Content } = Layout;
 import {ScheduleOutlined, UserOutlined, ProfileOutlined} from "@ant-design/icons";
-import {useAppDispatch, useAppSelector} from "../hook/hook.ts";
-import {getProfileUser} from "../store/profile/Slices/profileSlice.ts";
-import {selectProfileRequest} from "../Modules/profile/selectors.ts";
+import {useAppDispatch, useAppSelector} from "@/hook/hook";
+import {getProfileUser} from "@/store/profile/Slices/profileSlice";
+import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
 
 const HomePage: React.FC = () => {
   type MenuItem = Required<MenuProps>['items'][number];
@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
     dispatch(getProfileUser())
   }, [dispatch]);
   const { data: userData } = useAppSelector(selectProfileRequest);
-  const isAdminOrModer = userData?.roles.find((role) => role.toLowerCase() === 'admin' || role === 'moderator' )
+  const isAdminOrModer = userData?.roles.some((role) => role.toLowerCase() === 'admin' || role === 'moderator' ) ?? false;
 
   const menuItems: MenuItem[] = [
     {

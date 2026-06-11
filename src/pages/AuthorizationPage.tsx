@@ -6,7 +6,7 @@ import {Button, Checkbox, Col, Form, Input, message, Row, Typography} from "antd
 import {loginRules, passwordRules} from "@/helpers/validation/registrationRules";
 import bg from '@/accets/auth-bg.jpg'
 import icon from '@/accets/iconLogin.jpg'
-import {selectAuthSessionStatus} from "@/Modules/authorization/selectors";
+import {selectAuthSessionStatus} from "@/Modules/authorization/authorizationSelectors.ts";
 
 const { Title, Text } = Typography;
 

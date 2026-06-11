@@ -1,7 +1,6 @@
-import { RootState } from "../../store";
+import { RootState } from "@/store";
 import {createSelector} from "@reduxjs/toolkit";
-import {getAsyncRequestData} from "../../store/utils.ts";
-
+import {getAsyncRequestData} from "@/store/utils";
 
 export const selectUserStore = (state: RootState) => state.user;
 

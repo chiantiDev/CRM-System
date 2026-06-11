@@ -1,10 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {initialStateUser} from "../../initialState/user/initialStateUser.ts";
-import {addAsyncBuilderCases} from "../../utils.ts";
-import {createAppAsyncThunk} from "../../../hook/hook.ts";
-import {User, UserRequest} from "../../../types/users.ts";
-import {handleErrorAuthentication} from "../../../api/apiError.ts";
-import apiClient from "../../../api/apiClient.ts";
+import {initialStateUser} from "@/store/initialState/user/initialStateUser";
+import {addAsyncBuilderCases} from "@/store/utils";
+import {createAppAsyncThunk} from "@/hook/hook";
+import {User, UserRequest} from "@/types/users";
+import {handleErrorAuthentication} from "@/api/apiError";
+import apiClient from "@/api/apiClient";
 import {AxiosResponse} from "axios";
 
 interface UpdateUserProps {

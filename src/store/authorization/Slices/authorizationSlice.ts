@@ -7,7 +7,7 @@ import {logoutUser} from "@/store/profile/Slices/profileSlice";
 import {accessTokenStorage} from "@/api/tokenStorage";
 import {handleErrorAuthentication} from "@/api/apiError";
 import {addAsyncBuilderCases, initAsyncParticle} from "@/store/utils";
-import {initialStateAuthorization} from "@/store/initialState/initialStateAuthorization/initialStateAuthorization";
+import {initialStateAuthorization} from "@/store/initialState/authorization/initialStateAuthorization";
 
 export const checkAuthSession = createAppAsyncThunk<Token, void, { rejectValue: string }>(
   'authorization/checkAuthSession',

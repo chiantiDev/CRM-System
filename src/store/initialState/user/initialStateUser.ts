@@ -1,5 +1,5 @@
-import { IAsyncParticle, initAsyncParticle } from "../../utils.ts";
-import {User} from "../../../types/users.ts";
+import { IAsyncParticle, initAsyncParticle } from "@/store/utils";
+import {User} from "@/types/users";
 
 export interface userState {
   user: IAsyncParticle<User>;

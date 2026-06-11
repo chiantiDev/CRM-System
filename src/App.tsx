@@ -3,7 +3,8 @@ import {RouterProvider} from "react-router";
 import {router} from '@/router';
 import {useAppDispatch, useAppSelector} from '@/hook/hook';
 import {checkAuthSession} from '@/store/authorization/Slices/authorizationSlice';
-import {selectAuthSessionStatus, selectLoginStatus} from "@/Modules/authorization/selectors";
+import {selectAuthSessionStatus, selectLoginStatus} from "@/Modules/authorization/authorizationSelectors.ts";
+import {Spin} from "antd";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
