@@ -28,7 +28,7 @@ const UserPage: React.FC = () => {
       await dispatch(updateUser({id, updateUserData})).unwrap();
       await messageApi.success('Данные успешно обновлены');
     } catch (error: unknown) {
-
+      await messageApi.error('Ошибка обновления данных, имя и email обновляются вместе');
     }
   };
 

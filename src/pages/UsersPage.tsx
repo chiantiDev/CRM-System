@@ -1,74 +1,73 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {deleteUser, getUsers} from "@/store/users/Slice/usersSlice";
 import {selectDeleteUserStatus, selectUsersRequest, selectUsersStatus} from "@/Modules/users/usersSelectors.ts";
 import {Avatar, Button, Flex, message, Popconfirm, Space, Table, Tag, Tooltip, Input} from "antd";
-const { Search } = Input;
+
+const {Search} = Input;
 import type {TableProps} from 'antd';
 import {Link} from "react-router";
 import {UserOutlined, UserDeleteOutlined} from "@ant-design/icons";
-import {User, UserFilters} from "@/types/users";
+import {User} from "@/types/users";
 import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
 
+type ColumnsType<T extends object = object> = TableProps<T>['columns'];
+
 const UsersPage: React.FC = () => {
+  console.log('рендер')
   const dispatch = useAppDispatch();
   const {data: usersData} = useAppSelector(selectUsersRequest);
   const {data: userData} = useAppSelector(selectProfileRequest);
   const isAdmin = userData?.roles.some((role) => role.toLowerCase() === 'admin') ?? false;
-  const { isLoading: isLoadingUsers } = useAppSelector(selectUsersStatus);
-  const { isLoaded: isDeletingUser } = useAppSelector(selectDeleteUserStatus);
+  const {isLoading: isLoadingUsers} = useAppSelector(selectUsersStatus);
+  const {isLoaded: isDeletingUser} = useAppSelector(selectDeleteUserStatus);
 
-  const [params, setParams] = useState<UserFilters>({
-    search: undefined,
-    sortBy: undefined,
-    sortOrder: undefined,
-    isBlocked: undefined,
-    limit: 20,
-    page: 1,
-  })
-
-  // const [searchValue, setSearchValue] = useState<string>("");
-  //
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setParams((prev) => ({
-  //       ...prev,
-  //       search: searchValue.trim() || undefined,
-  //       page: 1,
-  //     }));
-  //   }, 500);
-  //
-  //   return () => clearTimeout(timer);
-  // }, [searchValue]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [sortParams, setSortParams] = useState<{ field?: string; order?: 'asc' | 'desc' }>({});
 
   useEffect(() => {
-    dispatch(getUsers(params));
-  }, [dispatch, params, isDeletingUser]);
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    dispatch(getUsers({
+      sortBy: sortParams.field,
+      sortOrder: sortParams.order,
+      page: currentPage - 1,
+      limit: 20,
+      search: debouncedSearch || undefined,
+    }));
+  }, [dispatch, currentPage, sortParams, debouncedSearch, isDeletingUser]);
+
 
   const handleTableChange: TableProps<User>['onChange'] = (pagination, _filters, sorter) => {
-    const currentSorter = Array.isArray(sorter) ? sorter[0] : sorter
-    setParams((prev) => ({
-      ...prev,
-      page: pagination.current ?? 1,
-      sortBy: currentSorter ? (currentSorter.field as string) : undefined,
-      sortOrder: currentSorter.order === 'ascend'
-        ? 'asc'
-        : currentSorter.order === 'descend'
-          ? 'desc'
-          : undefined,
-    }))
+    if (pagination.current) {
+      setCurrentPage(pagination.current);
+    }
+
+    if (!Array.isArray(sorter)) {
+      setSortParams({
+        field: sorter.field as string,
+        order: sorter.order ? (sorter.order === 'ascend' ? 'asc' : 'desc') : undefined,
+      });
+    }
   };
 
   const getHighlightedText = useCallback((text: string, search: string | undefined) => {
     if (!search) return text;
-
     const safeSearch = search.replace(/[.*+?^${}()|[\]]/g, '$&');
-    const regex = new RegExp(`(${safeSearch})`, 'gi');
+    const regex = new RegExp(`(${safeSearch.trim()})`, 'gi');
     const parts = text.split(regex);
 
     return parts.map((part, index) =>
       regex.test(part) ? (
-        <mark key={index} style={{ backgroundColor: '#ffc069', padding: 0 }}>
+        <mark key={index} style={{backgroundColor: '#ffc069', padding: 0}}>
           {part}
         </mark>
       ) : (
@@ -87,9 +86,9 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  const dataSource: User[] = usersData?.data
-    ? usersData.data.map((user) => ({
-      key: user.id,
+  const dataSource = useMemo(() => {
+    if (!usersData?.data) return [];
+    return usersData.data.map((user) => ({
       id: user.id,
       username: user.username,
       email: user.email,
@@ -97,10 +96,10 @@ const UsersPage: React.FC = () => {
       isBlocked: user.isBlocked,
       roles: user.roles,
       phoneNumber: user.phoneNumber || 'Не указан',
-    }))
-    : [];
+    }));
+  }, [usersData?.data]);
 
-  const columns: TableProps<User>['columns'] = [
+  const columns: ColumnsType<User> = [
     {
       title: 'Администрирование',
       key: 'administration',
@@ -134,14 +133,14 @@ const UsersPage: React.FC = () => {
       dataIndex: 'username',
       key: 'username',
       sorter: true,
-      render: (text) => getHighlightedText(text, params.search),
+      render: (text) => getHighlightedText(text, search),
     },
     {
       title: 'Email пользователя',
       dataIndex: 'email',
       key: 'email',
       sorter: true,
-      render: (text) => getHighlightedText(text, params.search),
+      render: (text) => getHighlightedText(text, search),
     },
     {
       title: 'Дата регистрации',
@@ -209,24 +208,29 @@ const UsersPage: React.FC = () => {
     <>
       {holder}
       <Tooltip placement={"bottomLeft"} title="Поиск по имени или email">
-        <Search prefix={<UserOutlined/>} placeholder="Найти пользователя" size="large" allowClear loading={isLoadingUsers}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setParams({search: e.target.value})}/>
+        <Search prefix={<UserOutlined/>} placeholder="Найти пользователя" size="large" allowClear
+                loading={isLoadingUsers}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}/>
       </Tooltip>
       <Table
         scroll={{y: 'calc(100vh - 160px)'}}
         dataSource={dataSource}
-        rowKey="key"
         columns={columns}
+        rowKey={(record) => record.id}
         onChange={handleTableChange}
         loading={isLoadingUsers}
         pagination={{
-              placement: ['bottomCenter'],
-              total: usersData?.meta.totalAmount ?? 0,
-              showTotal: (total, range) => `${range[0]}-${range[1]} из ${total} пользователей`,
-              current: params.page,
-              pageSize: 20,
-              showSizeChanger: false,
-            }}
+          placement: ['bottomCenter'],
+          current: currentPage,
+          pageSize: 20,
+          total: usersData?.meta?.totalAmount ?? 0,
+          showTotal: (total, range) => `${range[0]}-${range[1]} из ${total} пользователей`,
+          showSizeChanger: false,
+          itemRender: (_current, _type, originalElement) => {
+            if ((usersData?.meta?.totalAmount ?? 0) < 20) return null;
+            return originalElement;
+          },
+        }}
       />
     </>
   )
