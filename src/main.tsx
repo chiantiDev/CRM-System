@@ -19,6 +19,12 @@ createRoot(root).render(
       token: {
         colorPrimary: '#7f265c',
       },
+      components: {
+        Modal: {
+          colorBgMask: 'rgba(0,0,0,0.03)',
+          boxShadow: '0'
+        },
+      },
     }}
     locale={{
       ...ruRU,
