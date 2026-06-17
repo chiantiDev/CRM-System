@@ -82,7 +82,6 @@ const UsersPage: React.FC = () => {
     if (pagination.current) {
       setCurrentPage(pagination.current);
     }
-
     if (!Array.isArray(sorter)) {
       setSortParams({
         field: sorter.field as string,
@@ -139,6 +138,7 @@ const UsersPage: React.FC = () => {
     showSizeChanger: false,
     itemRender: itemRender,
   }
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentRoles, setCurrentRoles] = useState<Roles[]>([]);
 
@@ -167,118 +167,6 @@ const UsersPage: React.FC = () => {
         loading={isLoadingUsers}
         pagination={paginationConfig}
       >
-        <Table.Column
-          title="Администрирование"
-          key="administration"
-          render={(_, record) => (
-            <Space>
-              <Link to={`/home/user/${record.id}`}>
-                <Tooltip title="Перейти к профилю">
-                  <Avatar style={{backgroundColor: '#7f265c'}} icon={<UserOutlined/>}/>
-                </Tooltip>
-              </Link>
-              {isAdmin &&
-                  <Popconfirm
-                      title="Удалить?"
-                      description="Подтвердите действие"
-                      onConfirm={() => deleteUserConfirm(record.id)}
-                      okText="Подтвердить"
-                      cancelText="Отменить"
-                  >
-                      <Tooltip title="Удалить">
-                          <Button
-                              style={{
-                                width: '32px',
-                                height: '30px',
-                                padding: '0',
-                                border: 'none',
-                                borderRadius: '50%'
-                              }}>
-                              <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
-                          </Button>
-                      </Tooltip>
-                  </Popconfirm>
-              }
-              {!record.isBlocked ?
-                <Popconfirm
-                  title="Заблокировать?"
-                  description="Подтвердите действие"
-                  onConfirm={() => blockedUserConfirm(record.id)}
-                  okText="Подтвердить"
-                  cancelText="Отменить"
-                >
-                  <Tooltip title="Заблокировать">
-                    <Button
-                      style={{width: '32px', height: '30px', padding: '0', border: 'none', borderRadius: '50%'}}>
-                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<StopOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                </Popconfirm> :
-                isAdmin &&
-                  <Popconfirm
-                      title="Разблокировать?"
-                      description="Подтвердите действие"
-                      onConfirm={() => unblockedUserConfirm(record.id)}
-                      okText="Подтвердить"
-                      cancelText="Отменить"
-                  >
-                      <Tooltip title="Разблокировать">
-                          <Button
-                              style={{
-                                width: '32px',
-                                height: '30px',
-                                padding: '0',
-                                border: 'none',
-                                borderRadius: '50%'
-                              }}>
-                              <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
-                          </Button>
-                      </Tooltip>
-                  </Popconfirm>
-              }
-              {isAdmin &&
-                  <>
-                      <Tooltip title="Изменить роль">
-                          <Button onClick={() => {
-                            setIsModalOpen(true)
-                            setCurrentRoles(record.roles)
-                          }}
-                                  style={{
-                                    width: '32px',
-                                    height: '30px',
-                                    padding: '0',
-                                    border: 'none',
-                                    borderRadius: '50%'
-                                  }}>
-                              <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
-                          </Button>
-                      </Tooltip>
-                      <Modal
-                          title="Добавьте или удалите роли и подтвердите действие"
-                          open={isModalOpen}
-                          onOk={() => handleOk(record.id)}
-                          onCancel={() => setIsModalOpen(false)}
-                      >
-                          <Select
-                              mode="multiple"
-                              allowClear
-                              style={{width: '100%'}}
-                              placeholder="Please select"
-                              value={currentRoles}
-                              onChange={handleChange}
-                              options={[
-                                {value: 'ADMIN', label: 'ADMIN'},
-                                {value: 'MODERATOR', label: 'MODERATOR'},
-                                {value: 'USER', label: 'USER'},
-                              ]}
-                          />
-                      </Modal>
-                  </>
-              }
-            </Space>
-          )}
-        />
-
         <Table.Column title={'Имя пользователя'} dataIndex={'username'} key={'username'} sorter={true}
                       render={(text) => highlightedText(text, debouncedSearch)}/>
 
@@ -308,6 +196,7 @@ const UsersPage: React.FC = () => {
                             onChange={(e) => {
                               setSelectedKeys([e.target.value]);
                               e.target.value === 'all' ? setIsBlocked(undefined) : e.target.value === 'blocked' ? setIsBlocked(true) : setIsBlocked(false);
+                              setCurrentPage(0)
                             }}
                             style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
                           >
@@ -343,6 +232,118 @@ const UsersPage: React.FC = () => {
         />
 
         <Table.Column title="Номер телефона" dataIndex="phoneNumber" key="phoneNumber"/>
+
+        <Table.Column
+          title="Действия"
+          key="actions"
+          render={(_, record) => (
+            <Space>
+              <Link to={`/home/user/${record.id}`}>
+                <Tooltip title="Профиль">
+                  <Avatar style={{backgroundColor: '#7f265c'}} icon={<UserOutlined/>}/>
+                </Tooltip>
+              </Link>
+              {isAdmin &&
+                <Popconfirm
+                  title="Удалить?"
+                  description="Подтвердите действие"
+                  onConfirm={() => deleteUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Tooltip title="Удалить">
+                    <Button
+                      style={{
+                        width: '32px',
+                        height: '30px',
+                        padding: '0',
+                        border: 'none',
+                        borderRadius: '50%'
+                      }}>
+                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                </Popconfirm>
+              }
+              {isAdmin &&
+                <>
+                  <Tooltip title="Изменить роли">
+                    <Button onClick={() => {
+                      setIsModalOpen(true)
+                      setCurrentRoles(record.roles)
+                    }}
+                            style={{
+                              width: '32px',
+                              height: '30px',
+                              padding: '0',
+                              border: 'none',
+                              borderRadius: '50%'
+                            }}>
+                      <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                  <Modal
+                    title="Добавьте или удалите роли и подтвердите действие"
+                    open={isModalOpen}
+                    onOk={() => handleOk(record.id)}
+                    onCancel={() => setIsModalOpen(false)}
+                  >
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{width: '100%'}}
+                      placeholder="Please select"
+                      value={currentRoles}
+                      onChange={handleChange}
+                      options={[
+                        {value: 'ADMIN', label: 'ADMIN'},
+                        {value: 'MODERATOR', label: 'MODERATOR'},
+                        {value: 'USER', label: 'USER'},
+                      ]}
+                    />
+                  </Modal>
+                </>
+              }
+              {!record.isBlocked ?
+                <Popconfirm
+                  title="Заблокировать?"
+                  description="Подтвердите действие"
+                  onConfirm={() => blockedUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Tooltip title="Заблокировать">
+                    <Button
+                      style={{width: '32px', height: '30px', padding: '0', border: 'none', borderRadius: '50%'}}>
+                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<StopOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                </Popconfirm> :
+                isAdmin &&
+                <Popconfirm
+                  title="Разблокировать?"
+                  description="Подтвердите действие"
+                  onConfirm={() => unblockedUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Tooltip title="Разблокировать">
+                    <Button
+                      style={{
+                        width: '32px',
+                        height: '30px',
+                        padding: '0',
+                        border: 'none',
+                        borderRadius: '50%'
+                      }}>
+                      <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                </Popconfirm>
+              }
+            </Space>
+          )}
+        />
       </Table>
     </>
   )
