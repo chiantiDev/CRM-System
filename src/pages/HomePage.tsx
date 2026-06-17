@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
     dispatch(getProfileUser())
   }, [dispatch]);
   const { data: userData } = useAppSelector(selectProfileRequest);
-  const isAdminOrModer = userData?.roles.some((role) => role.toLowerCase() === 'admin' || role === 'moderator' ) ?? false;
+  const isAdminOrModer = userData?.roles.some((role) => role.toLowerCase() === 'admin' || role.toLowerCase() === 'moderator' ) ?? false;
 
   const menuItems: MenuItem[] = [
     {
