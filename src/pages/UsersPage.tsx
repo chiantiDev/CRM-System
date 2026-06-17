@@ -3,7 +3,9 @@ import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {blockedUser, deleteUser, editRolesUser, getUsers, unblockedUser} from "@/store/users/Slice/usersSlice";
 import {
   selectBlockedUserStatus,
-  selectDeleteUserStatus, selectEditRolesUserStatus, selectUnblockedUserStatus,
+  selectDeleteUserStatus,
+  selectEditRolesUserStatus,
+  selectUnblockedUserStatus,
   selectUsersRequest,
   selectUsersStatus
 } from "@/Modules/users/usersSelectors.ts";
@@ -22,7 +24,6 @@ import {
   Select,
   Radio,
 } from "antd";
-
 const {Search} = Input;
 import {UserOutlined, UserDeleteOutlined, StopOutlined, CheckCircleOutlined, EditOutlined} from "@ant-design/icons";
 import type {TableProps, TablePaginationConfig} from 'antd';
@@ -141,11 +142,9 @@ const UsersPage: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentRoles, setCurrentRoles] = useState<Roles[]>([]);
-
   const handleChange = (newRoles: Roles[]) => {
     setCurrentRoles(newRoles);
   };
-
   const handleOk = async (id: number) => {
     await editRolesConfirm(id, {roles: currentRoles})
     setIsModalOpen(false);
@@ -159,7 +158,7 @@ const UsersPage: React.FC = () => {
                 loading={isLoadingUsers}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}/>
       </Tooltip>
-      <Table
+      <Table<User>
         scroll={{y: 'calc(100vh - 160px)'}}
         dataSource={dataSource}
         rowKey={(record) => record.id}
@@ -167,14 +166,14 @@ const UsersPage: React.FC = () => {
         loading={isLoadingUsers}
         pagination={paginationConfig}
       >
-        <Table.Column title={'Имя пользователя'} dataIndex={'username'} key={'username'} sorter={true}
+        <Table.Column<User> title={'Имя пользователя'} dataIndex={'username'} key={'username'} sorter={true}
                       render={(text) => highlightedText(text, debouncedSearch)}/>
 
-        <Table.Column title="Email пользователя" dataIndex="email" key="email" sorter={true}
+        <Table.Column<User> title="Email пользователя" dataIndex="email" key="email" sorter={true}
                       render={(text) => highlightedText(text, debouncedSearch)}
         />
 
-        <Table.Column title="Дата регистрации" dataIndex="date" key="date"
+        <Table.Column<User> title="Дата регистрации" dataIndex="date" key="date"
                       render={(text: string) => {
                         if (!text) return '-';
                         return new Date(text).toLocaleDateString('ru-RU', {
@@ -187,7 +186,7 @@ const UsersPage: React.FC = () => {
                       }}
         />
 
-        <Table.Column title="Статус блокировки" dataIndex="isBlocked" key="isBlocked"
+        <Table.Column<User> title="Статус блокировки" dataIndex="isBlocked" key="isBlocked"
                       filterIcon={isAdmin ? undefined : () => null}
                       filterDropdown={({setSelectedKeys, selectedKeys}) => (
                         <div style={{padding: 12}}>
@@ -213,7 +212,7 @@ const UsersPage: React.FC = () => {
                       }}
         />
 
-        <Table.Column title="Роли" dataIndex="roles" key="roles"
+        <Table.Column<User> title="Роли" dataIndex="roles" key="roles"
                       render={(roles: string[]) => (
                         <Flex gap="small" align="center" wrap>
                           {roles.map((role) => {
@@ -231,9 +230,9 @@ const UsersPage: React.FC = () => {
                       )}
         />
 
-        <Table.Column title="Номер телефона" dataIndex="phoneNumber" key="phoneNumber"/>
+        <Table.Column<User> title="Номер телефона" dataIndex="phoneNumber" key="phoneNumber"/>
 
-        <Table.Column
+        <Table.Column<User>
           title="Действия"
           key="actions"
           render={(_, record) => (
@@ -287,20 +286,27 @@ const UsersPage: React.FC = () => {
                     open={isModalOpen}
                     onOk={() => handleOk(record.id)}
                     onCancel={() => setIsModalOpen(false)}
+                    okButtonProps={{ disabled: currentRoles.length === 0 }}
                   >
-                    <Select
-                      mode="multiple"
-                      allowClear
-                      style={{width: '100%'}}
-                      placeholder="Please select"
-                      value={currentRoles}
-                      onChange={handleChange}
-                      options={[
-                        {value: 'ADMIN', label: 'ADMIN'},
-                        {value: 'MODERATOR', label: 'MODERATOR'},
-                        {value: 'USER', label: 'USER'},
-                      ]}
-                    />
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                      <Select
+                        mode="multiple"
+                        allowClear
+                        style={{width: '100%'}}
+                        placeholder="Пожалуйста, добавьте роль"
+                        value={currentRoles}
+                        onChange={handleChange}
+                        status={currentRoles.length === 0 ? 'error' : ''}
+                        options={[
+                          {value: 'ADMIN', label: 'ADMIN'},
+                          {value: 'MODERATOR', label: 'MODERATOR'},
+                          {value: 'USER', label: 'USER'},
+                        ]}
+                      />
+                      {currentRoles.length === 0 && (
+                        <span style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
+                      )}
+                    </div>
                   </Modal>
                 </>
               }
