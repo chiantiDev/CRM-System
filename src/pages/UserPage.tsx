@@ -14,43 +14,63 @@ const UserPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const {data: userData} = useAppSelector(selectUserRequest);
   const {isLoaded} = useAppSelector(selectUserStatus);
-  const [isEdit, setIsEdit] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [form] = Form.useForm<UserRequest>();
+  const [isEdit, setIsEdit] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [changedFields, setChangedFields] = useState<UserRequest>({});
 
   useEffect(() => {
     id ? dispatch(getUser(id)) : null;
-  }, [dispatch]);
+  }, [dispatch, isUpdate]);
 
-  const onFinish: FormProps<UserRequest>['onFinish'] = async (updateUserData) => {
-    setIsEdit(false)
+  useEffect(() => {
+    if (userData) {
+      form.setFieldsValue({
+        username: userData.username,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber || 'Не указан',
+      });
+    }
+  }, [userData]);
+
+  const handleValuesChange = (changedValues: UserRequest) => {
+    setChangedFields((prev) => ({
+      ...prev,
+      ...changedValues
+    }));
+  };
+
+  const onFinish: FormProps<UserRequest>['onFinish'] = async () => {
     if (!id) return;
     try {
-      await dispatch(updateUser({id, updateUserData})).unwrap();
+      setIsEdit(false);
+      await dispatch(updateUser({id, updateUserData: changedFields})).unwrap();
       await messageApi.success('Данные успешно обновлены');
+      setIsUpdate(prev => !prev);
+      setChangedFields({});
     } catch (error: unknown) {
       await messageApi.error('Ошибка обновления данных, имя и email обновляются вместе');
     }
   };
 
-  const onFinishFailed: FormProps<UserRequest>['onFinishFailed'] = () => {
-    messageApi.error('Пожалуйста, исправьте ошибки в форме');
+  const onFinishFailed: FormProps<UserRequest>['onFinishFailed'] = async () => {
+    await messageApi.error('Пожалуйста, исправьте ошибки в форме');
   };
 
   return (
     <>
       {contextHolder}
       {isLoaded ? (
-          <Form layout="vertical"
+          <Form form={form}
+                layout="vertical"
                 style={{ maxWidth: 400 }}
+                onValuesChange={handleValuesChange}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
                 disabled={!isEdit}
-                initialValues={{
-                  username: userData?.username,
-                  email: userData?.email,
-                  phoneNumber: userData?.phoneNumber || 'Не указан',
-                }}>
+          >
             <Form.Item<UserRequest> label="Имя пользователя" name="username" rules={userNameRules}>
               <Input/>
             </Form.Item>

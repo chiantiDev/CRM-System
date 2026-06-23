@@ -24,7 +24,6 @@ import {
   Select,
   Radio,
 } from "antd";
-const {Search} = Input;
 import {UserOutlined, UserDeleteOutlined, StopOutlined, CheckCircleOutlined, EditOutlined} from "@ant-design/icons";
 import type {TableProps, TablePaginationConfig} from 'antd';
 import {Link} from "react-router";
@@ -154,9 +153,13 @@ const UsersPage: React.FC = () => {
     <>
       {holder}
       <Tooltip placement={"bottomLeft"} title="Поиск по имени или email">
-        <Search prefix={<UserOutlined/>} placeholder="Найти пользователя" size="large" allowClear
-                loading={isLoadingUsers}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}/>
+        <Input
+          prefix={<UserOutlined />}
+          placeholder="Найти пользователя"
+          size="large"
+          allowClear
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+        />
       </Tooltip>
       <Table<User>
         scroll={{y: 'calc(100vh - 160px)'}}
