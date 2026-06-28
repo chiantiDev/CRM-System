@@ -1,13 +1,13 @@
 import {ActionReducerMapBuilder, AsyncThunk, Draft} from "@reduxjs/toolkit";
 
-export interface IAsyncParticle<T> {
+export interface asyncParticle<T> {
   data: T | null;
   error: Error | string | null | unknown;
   errorCounter: number;
   status: 'idle' | 'pending' | 'fulfilled' | 'rejected';
 }
 
-export const initAsyncParticle = <T extends unknown>(data: T | null = null): IAsyncParticle<T> => ({
+export const initAsyncParticle = <T extends unknown>(data: T | null = null): asyncParticle<T> => ({
   data,
   error: null,
   errorCounter: 0,
@@ -17,7 +17,7 @@ export const initAsyncParticle = <T extends unknown>(data: T | null = null): IAs
 export const addAsyncBuilderCases = <State, RQ, RS, ThunkConfig extends object = any>(
   builder: ActionReducerMapBuilder<State>,
   thunk: AsyncThunk<RS, RQ, ThunkConfig>,
-  selector: (state: Draft<State>) => IAsyncParticle<RS>
+  selector: (state: Draft<State>) => asyncParticle<RS>
 ): void => {
   builder
     .addCase(thunk.pending, (state: Draft<State>) => {
@@ -39,7 +39,7 @@ export const addAsyncBuilderCases = <State, RQ, RS, ThunkConfig extends object =
     });
 };
 
-export interface IAsyncDataStatus {
+export interface asyncDataStatus {
   hasError: boolean;
   isIdle: boolean;
   isLoading: boolean;
@@ -48,7 +48,7 @@ export interface IAsyncDataStatus {
   isLoadedOrError: boolean;
 }
 
-export const getAsyncDataStatus = (data: IAsyncParticle<unknown>): IAsyncDataStatus => ({
+export const getAsyncDataStatus = (data: asyncParticle<unknown>): asyncDataStatus => ({
   hasError: data?.status === 'rejected',
   isIdle: data?.status === 'idle',
   isLoading: data?.status === 'pending',
@@ -57,17 +57,17 @@ export const getAsyncDataStatus = (data: IAsyncParticle<unknown>): IAsyncDataSta
   isLoadedOrError: data?.status === 'fulfilled' || data?.status === 'rejected',
 });
 
-export interface IErrorData {
+export interface errorData {
   message?: string;
   code?: string | number;
   [key: string]: any;
 }
 
-export const getAsyncRequestData = <T>(stateParam: IAsyncParticle<T>): {
+export const getAsyncRequestData = <T>(stateParam: asyncParticle<T>): {
   data: T | null;
-  error: IErrorData | null | unknown;
+  error: errorData | null | unknown;
   errorCounter: number;
-  status: IAsyncDataStatus;
+  status: asyncDataStatus;
 } => ({
   data: stateParam?.data,
   error: stateParam?.error,

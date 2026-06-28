@@ -1,9 +1,9 @@
-import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
+import {asyncParticle, initAsyncParticle} from "@/store/utils";
 import {Token} from "@/types/auth";
 
 export interface AuthState {
-  session: IAsyncParticle<Token>;
-  login: IAsyncParticle<Token>;
+  session: asyncParticle<Token>;
+  login: asyncParticle<Token>;
 }
 
 export const initialStateAuthorization: AuthState = {

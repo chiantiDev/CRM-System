@@ -13,7 +13,7 @@ const routes = [
     Component: GuestRoute,
     children: [
       {
-        path: "/",
+        path: "/login",
         Component: AuthorizationPage,
       },
       {
@@ -26,24 +26,24 @@ const routes = [
     Component: ProtectedRoute,
     children: [
       {
-        path: "/home",
+        path: "/",
         Component: HomePage,
         children: [
-          {index: true, Component: () => <Navigate to="todo" replace/>},
+          {index: true, Component: () => <Navigate to="/todo" replace/>},
           {
-            path: "todo",
+            path: "/todo",
             Component: TodosPage,
           },
           {
-            path: "profile",
+            path: "/profile",
             Component: ProfilePage,
           },
           {
-            path: "users",
+            path: "/users",
             Component: UsersPage,
           },
           {
-            path: "user/:id",
+            path: "/user/:id",
             Component: UserPage,
           },
         ],

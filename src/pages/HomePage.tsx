@@ -12,9 +12,9 @@ const HomePage: React.FC = () => {
 
   const location = useLocation();
   let currentKey = 'todo';
-  if (location.pathname.includes('/home/todo')) currentKey = 'todo';
-  if (location.pathname.includes('/home/profile')) currentKey = 'profile';
-  if (location.pathname.includes('/home/users') || location.pathname.includes('/home/user')) currentKey = 'users';
+  if (location.pathname.includes('/todo')) currentKey = 'todo';
+  if (location.pathname.includes('/profile')) currentKey = 'profile';
+  if (location.pathname.includes('/users') || location.pathname.includes('/user')) currentKey = 'users';
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -27,18 +27,18 @@ const HomePage: React.FC = () => {
     {
       key: 'todo',
       icon: <ScheduleOutlined />,
-      label: <Link to="todo">Список задач</Link>,
+      label: <Link to="/todo">Список задач</Link>,
     },
     {
       key: 'profile',
       icon: <ProfileOutlined />,
-      label: <Link to="profile">Личный кабинет</Link>,
+      label: <Link to="/profile">Личный кабинет</Link>,
     },
     isAdminOrModer ?
     {
       key: 'users',
       icon: <UserOutlined />,
-      label: <Link to="users">Пользователи</Link>,
+      label: <Link to="/users">Пользователи</Link>,
     } : null,
   ];
 

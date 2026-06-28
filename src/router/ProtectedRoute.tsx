@@ -5,10 +5,10 @@ import {selectIsAuth} from "@/Modules/authorization/authorizationSelectors.ts";
 
 export const ProtectedRoute: React.FC = () => {
   const isAuth = useAppSelector(selectIsAuth);
-  return isAuth  ? <Outlet /> : <Navigate to="/" replace />;
+  return isAuth  ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export const GuestRoute: React.FC = () => {
   const isAuth = useAppSelector(selectIsAuth);
-  return !isAuth  ? <Outlet /> : <Navigate to="/home" replace />;
+  return !isAuth  ? <Outlet /> : <Navigate to="/" replace />;
 };

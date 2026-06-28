@@ -8,11 +8,11 @@ import {Spin} from "antd";
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isLoadingOrIdle } = useAppSelector(selectAuthSessionStatus);
+  const {isLoadingOrIdle } = useAppSelector(selectAuthSessionStatus);
   const { isLoading } = useAppSelector(selectLoginStatus);
 
   useEffect(() => {
-      dispatch(checkAuthSession());
+    dispatch(checkAuthSession());
   }, [dispatch]);
 
   return (

@@ -32,7 +32,7 @@ export const loginUser = createAppAsyncThunk<Token, AuthData, { rejectValue: str
   'authorization/loginUser',
   async (authData, {rejectWithValue}) => {
     try {
-      const response = await authApiClient.post<Token, AxiosResponse<Token>, AuthData>('/auth/signin', authData);
+      const response = await authApiClient.post<Token, AxiosResponse<Token>, AuthData>('auth/signin', authData);
       const {accessToken, refreshToken} = response.data;
       accessTokenStorage.setToken(accessToken);
       localStorage.setItem('refreshToken', refreshToken);

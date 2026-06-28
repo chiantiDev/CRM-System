@@ -1,9 +1,9 @@
-import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
+import {asyncParticle, initAsyncParticle} from "@/store/utils";
 import {Profile} from "@/types/auth";
 
 export interface ProfileState {
-  profile: IAsyncParticle<Profile>;
-  logout: IAsyncParticle<void>;
+  profile: asyncParticle<Profile>;
+  logout: asyncParticle<void>;
 }
 
 export const initialState: ProfileState = {

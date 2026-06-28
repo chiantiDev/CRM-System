@@ -48,6 +48,8 @@ const UsersPage: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [isBlocked, setIsBlocked] = useState<boolean | undefined>(undefined);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentRoles, setCurrentRoles] = useState<Roles[]>([]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -99,6 +101,7 @@ const UsersPage: React.FC = () => {
       messageApi.error('Ошибка запроса удаления пользователя');
     }
   };
+
   const blockedUserConfirm = async (id: number): Promise<void> => {
     try {
       await dispatch(blockedUser(id)).unwrap();
@@ -107,6 +110,7 @@ const UsersPage: React.FC = () => {
       messageApi.error('Ошибка запроса блокировки пользователя');
     }
   };
+
   const unblockedUserConfirm = async (id: number): Promise<void> => {
     try {
       await dispatch(unblockedUser(id)).unwrap();
@@ -115,10 +119,16 @@ const UsersPage: React.FC = () => {
       messageApi.error('Ошибка запроса разблокировки пользователя');
     }
   };
+
+  const saveCurrentRoles = (newRoles: Roles[]) => {
+    setCurrentRoles(newRoles);
+  };
+
   const editRolesConfirm = async (id: number, roles: UserRolesRequest): Promise<void> => {
     try {
       await dispatch(editRolesUser({id, roles})).unwrap();
       messageApi.success('Роли пользователя изменены');
+      setIsModalOpen(false);
     } catch (error) {
       messageApi.error('Ошибка запроса изменения ролей пользователя');
     }
@@ -139,28 +149,21 @@ const UsersPage: React.FC = () => {
     itemRender: itemRender,
   }
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentRoles, setCurrentRoles] = useState<Roles[]>([]);
-  const handleChange = (newRoles: Roles[]) => {
-    setCurrentRoles(newRoles);
-  };
-  const handleOk = async (id: number) => {
-    await editRolesConfirm(id, {roles: currentRoles})
-    setIsModalOpen(false);
-  };
-
   return (
     <>
       {holder}
-      <Tooltip placement={"bottomLeft"} title="Поиск по имени или email">
+      <Tooltip
+        placement={"bottomLeft"}
+        title="Поиск по имени или email">
         <Input
-          prefix={<UserOutlined />}
+          prefix={<UserOutlined/>}
           placeholder="Найти пользователя"
           size="large"
           allowClear
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
         />
       </Tooltip>
+
       <Table<User>
         scroll={{y: 'calc(100vh - 160px)'}}
         dataSource={dataSource}
@@ -169,149 +172,171 @@ const UsersPage: React.FC = () => {
         loading={isLoadingUsers}
         pagination={paginationConfig}
       >
-        <Table.Column<User> title={'Имя пользователя'} dataIndex={'username'} key={'username'} sorter={true}
-                      render={(text) => highlightedText(text, debouncedSearch)}/>
+        <Table.Column<User>
+          title={'Имя пользователя'}
+          dataIndex={'username'}
+          key={'username'}
+          sorter={true}
+          render={(text) => highlightedText(text, debouncedSearch)}/>
 
-        <Table.Column<User> title="Email пользователя" dataIndex="email" key="email" sorter={true}
-                      render={(text) => highlightedText(text, debouncedSearch)}
+        <Table.Column<User>
+          title="Email пользователя"
+          dataIndex="email"
+          key="email"
+          sorter={true}
+          render={(text) => highlightedText(text, debouncedSearch)}
         />
 
-        <Table.Column<User> title="Дата регистрации" dataIndex="date" key="date"
-                      render={(text: string) => {
-                        if (!text) return '-';
-                        return new Date(text).toLocaleDateString('ru-RU', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        });
-                      }}
+        <Table.Column<User>
+          title="Дата регистрации"
+          dataIndex="date"
+          key="date"
+          render={(text: string) => {
+            if (!text) return '-';
+            return new Date(text).toLocaleDateString('ru-RU', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          }}
         />
 
-        <Table.Column<User> title="Статус блокировки" dataIndex="isBlocked" key="isBlocked"
-                      filterIcon={isAdmin ? undefined : () => null}
-                      filterDropdown={({setSelectedKeys, selectedKeys}) => (
-                        <div style={{padding: 12}}>
-                          <Radio.Group
-                            value={selectedKeys[0] || 'all'}
-                            onChange={(e) => {
-                              setSelectedKeys([e.target.value]);
-                              e.target.value === 'all' ? setIsBlocked(undefined) : e.target.value === 'blocked' ? setIsBlocked(true) : setIsBlocked(false);
-                              setCurrentPage(0)
-                            }}
-                            style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
-                          >
-                            <Radio value="all">Все пользователи</Radio>
-                            <Radio value="blocked">Только заблокированные пользователи</Radio>
-                            <Radio value="active">Только активные пользователи</Radio>
-                          </Radio.Group>
-                        </div>
-                      )}
-                      render={(status: boolean) => {
-                        const statusText = status ? 'blocked' : 'active';
-                        const color = status ? 'red' : 'green';
-                        return <Tag color={color}>{statusText.toUpperCase()}</Tag>;
-                      }}
+        <Table.Column<User>
+          title="Статус блокировки"
+          dataIndex="isBlocked"
+          key="isBlocked"
+          filterIcon={isAdmin ? undefined : () => null}
+          filterDropdown={({setSelectedKeys, selectedKeys}) => (
+            <div style={{padding: 12}}>
+              <Radio.Group
+                value={selectedKeys[0] || 'all'}
+                onChange={(e) => {
+                  setSelectedKeys([e.target.value]);
+                  e.target.value === 'all' ? setIsBlocked(undefined) : e.target.value === 'blocked' ? setIsBlocked(true) : setIsBlocked(false);
+                  setCurrentPage(0)
+                }}
+                style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
+              >
+                <Radio value="all">Все пользователи</Radio>
+                <Radio value="blocked">Только заблокированные пользователи</Radio>
+                <Radio value="active">Только активные пользователи</Radio>
+              </Radio.Group>
+            </div>
+          )}
+          render={(status: boolean) => {
+            const statusText = status ? 'blocked' : 'active';
+            const color = status ? 'red' : 'green';
+            return <Tag color={color}>{statusText.toUpperCase()}</Tag>;
+          }}
         />
 
-        <Table.Column<User> title="Роли" dataIndex="roles" key="roles"
-                      render={(roles: string[]) => (
-                        <Flex gap="small" align="center" wrap>
-                          {roles.map((role) => {
-                            let color;
-                            if (role === 'USER') color = 'cyan';
-                            if (role === 'ADMIN') color = 'gold';
-                            if (role === 'MODERATOR') color = 'purple';
-                            return (
-                              <Tag color={color} key={role}>
-                                {role.toUpperCase()}
-                              </Tag>
-                            );
-                          })}
-                        </Flex>
-                      )}
+        <Table.Column<User>
+          title="Роли"
+          dataIndex="roles"
+          key="roles"
+          render={(roles: string[]) => (
+            <Flex gap="small" align="center" wrap>
+              {roles.map((role) => {
+                const ROLE_COLORS: Record<Roles, string> = {
+                  USER: 'cyan',
+                  ADMIN: 'gold',
+                  MODERATOR: 'purple',
+                };
+                return (
+                  <Tag color={ROLE_COLORS[role as Roles] || 'default'} key={role}>
+                    {role.toUpperCase()}
+                  </Tag>
+                );
+              })}
+            </Flex>
+          )}
         />
 
-        <Table.Column<User> title="Номер телефона" dataIndex="phoneNumber" key="phoneNumber"/>
+        <Table.Column<User>
+          title="Номер телефона"
+          dataIndex="phoneNumber"
+          key="phoneNumber"/>
 
         <Table.Column<User>
           title="Действия"
           key="actions"
           render={(_, record) => (
             <Space>
-              <Link to={`/home/user/${record.id}`}>
+              <Link to={`/user/${record.id}`}>
                 <Tooltip title="Профиль">
                   <Avatar style={{backgroundColor: '#7f265c'}} icon={<UserOutlined/>}/>
                 </Tooltip>
               </Link>
               {isAdmin &&
-                <Popconfirm
-                  title="Удалить?"
-                  description="Подтвердите действие"
-                  onConfirm={() => deleteUserConfirm(record.id)}
-                  okText="Подтвердить"
-                  cancelText="Отменить"
-                >
-                  <Tooltip title="Удалить">
-                    <Button
-                      style={{
-                        width: '32px',
-                        height: '30px',
-                        padding: '0',
-                        border: 'none',
-                        borderRadius: '50%'
-                      }}>
-                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                </Popconfirm>
+                  <Popconfirm
+                      title="Удалить?"
+                      description="Подтвердите действие"
+                      onConfirm={() => deleteUserConfirm(record.id)}
+                      okText="Подтвердить"
+                      cancelText="Отменить"
+                  >
+                      <Tooltip title="Удалить">
+                          <Button
+                              style={{
+                                width: '32px',
+                                height: '30px',
+                                padding: '0',
+                                border: 'none',
+                                borderRadius: '50%'
+                              }}>
+                              <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
+                          </Button>
+                      </Tooltip>
+                  </Popconfirm>
               }
               {isAdmin &&
-                <>
-                  <Tooltip title="Изменить роли">
-                    <Button onClick={() => {
-                      setIsModalOpen(true)
-                      setCurrentRoles(record.roles)
-                    }}
-                            style={{
-                              width: '32px',
-                              height: '30px',
-                              padding: '0',
-                              border: 'none',
-                              borderRadius: '50%'
-                            }}>
-                      <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                  <Modal
-                    title="Добавьте или удалите роли и подтвердите действие"
-                    open={isModalOpen}
-                    onOk={() => handleOk(record.id)}
-                    onCancel={() => setIsModalOpen(false)}
-                    okButtonProps={{ disabled: currentRoles.length === 0 }}
-                  >
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                      <Select
-                        mode="multiple"
-                        allowClear
-                        style={{width: '100%'}}
-                        placeholder="Пожалуйста, добавьте роль"
-                        value={currentRoles}
-                        onChange={handleChange}
-                        status={currentRoles.length === 0 ? 'error' : ''}
-                        options={[
-                          {value: 'ADMIN', label: 'ADMIN'},
-                          {value: 'MODERATOR', label: 'MODERATOR'},
-                          {value: 'USER', label: 'USER'},
-                        ]}
-                      />
-                      {currentRoles.length === 0 && (
-                        <span style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
-                      )}
-                    </div>
-                  </Modal>
-                </>
+                  <>
+                      <Tooltip title="Изменить роли">
+                          <Button onClick={() => {
+                            setIsModalOpen(true)
+                            setCurrentRoles(record.roles)
+                          }}
+                                  style={{
+                                    width: '32px',
+                                    height: '30px',
+                                    padding: '0',
+                                    border: 'none',
+                                    borderRadius: '50%'
+                                  }}>
+                              <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
+                          </Button>
+                      </Tooltip>
+                      <Modal
+                          title="Добавьте или удалите роли и подтвердите действие"
+                          open={isModalOpen}
+                          onOk={() => editRolesConfirm(record.id, {roles: currentRoles})}
+                          onCancel={() => setIsModalOpen(false)}
+                          okButtonProps={{disabled: currentRoles.length === 0}}
+                      >
+                          <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                              <Select
+                                  mode="multiple"
+                                  allowClear
+                                  style={{width: '100%'}}
+                                  placeholder="Пожалуйста, добавьте роль"
+                                  value={currentRoles}
+                                  onChange={saveCurrentRoles}
+                                  status={currentRoles.length === 0 ? 'error' : ''}
+                                  options={[
+                                    {value: 'ADMIN', label: 'ADMIN'},
+                                    {value: 'MODERATOR', label: 'MODERATOR'},
+                                    {value: 'USER', label: 'USER'},
+                                  ]}
+                              />
+                            {currentRoles.length === 0 && (
+                              <span
+                                style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
+                            )}
+                          </div>
+                      </Modal>
+                  </>
               }
               {!record.isBlocked ?
                 <Popconfirm
@@ -329,26 +354,26 @@ const UsersPage: React.FC = () => {
                   </Tooltip>
                 </Popconfirm> :
                 isAdmin &&
-                <Popconfirm
-                  title="Разблокировать?"
-                  description="Подтвердите действие"
-                  onConfirm={() => unblockedUserConfirm(record.id)}
-                  okText="Подтвердить"
-                  cancelText="Отменить"
-                >
-                  <Tooltip title="Разблокировать">
-                    <Button
-                      style={{
-                        width: '32px',
-                        height: '30px',
-                        padding: '0',
-                        border: 'none',
-                        borderRadius: '50%'
-                      }}>
-                      <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                </Popconfirm>
+                  <Popconfirm
+                      title="Разблокировать?"
+                      description="Подтвердите действие"
+                      onConfirm={() => unblockedUserConfirm(record.id)}
+                      okText="Подтвердить"
+                      cancelText="Отменить"
+                  >
+                      <Tooltip title="Разблокировать">
+                          <Button
+                              style={{
+                                width: '32px',
+                                height: '30px',
+                                padding: '0',
+                                border: 'none',
+                                borderRadius: '50%'
+                              }}>
+                              <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
+                          </Button>
+                      </Tooltip>
+                  </Popconfirm>
               }
             </Space>
           )}

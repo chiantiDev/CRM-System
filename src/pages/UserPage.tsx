@@ -16,8 +16,8 @@ const UserPage: React.FC = () => {
   const {isLoaded} = useAppSelector(selectUserStatus);
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm<UserRequest>();
-  const [isEdit, setIsEdit] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [changedFields, setChangedFields] = useState<UserRequest>({});
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const UserPage: React.FC = () => {
       setIsUpdate(prev => !prev);
       setChangedFields({});
     } catch (error: unknown) {
-      await messageApi.error('Ошибка обновления данных, имя и email обновляются вместе');
+      await messageApi.error('Ошибка обновления данных');
     }
   };
 
@@ -98,7 +98,7 @@ const UserPage: React.FC = () => {
 
               <Form.Item label={null}>
                 <Button disabled={false} type="primary">
-                  <Link to="/home/users">Вернуться</Link>
+                  <Link to="/users">Вернуться</Link>
                 </Button>
               </Form.Item>
             </Space>

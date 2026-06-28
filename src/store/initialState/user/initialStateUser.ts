@@ -1,9 +1,9 @@
-import { IAsyncParticle, initAsyncParticle } from "@/store/utils";
+import { asyncParticle, initAsyncParticle } from "@/store/utils";
 import {User} from "@/types/users";
 
 export interface userState {
-  user: IAsyncParticle<User>;
-  updateUser: IAsyncParticle<User>;
+  user: asyncParticle<User>;
+  updateUser: asyncParticle<User>;
 }
 
 export const initialStateUser: userState = {

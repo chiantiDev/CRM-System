@@ -1,7 +1,7 @@
-import {IAsyncParticle, initAsyncParticle} from "@/store/utils";
+import {asyncParticle, initAsyncParticle} from "@/store/utils";
 
 export interface registrationState {
-  registration: IAsyncParticle<void>;
+  registration: asyncParticle<void>;
 }
 
 export const initialState: registrationState = {
