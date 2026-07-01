@@ -16,7 +16,15 @@ export const getProfileUser = createAppAsyncThunk<Profile, void>(
     } catch (error: unknown) {
       return rejectWithValue(handleErrorAuthentication(error));
     }
-  }
+  },
+  {
+    condition: (_, { getState }) => {
+      const fetchStatus = getState().profile.profile.status
+      if (fetchStatus === 'pending') {
+        return false
+      }
+    },
+  },
 );
 
 export const logoutUser = createAppAsyncThunk<void>(

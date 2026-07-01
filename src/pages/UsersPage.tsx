@@ -49,6 +49,7 @@ const UsersPage: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [isBlocked, setIsBlocked] = useState<boolean | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingUserId, setEditingUserId] = useState<number>(0);
   const [currentRoles, setCurrentRoles] = useState<Roles[]>([]);
 
   useEffect(() => {
@@ -292,11 +293,11 @@ const UsersPage: React.FC = () => {
                   </Popconfirm>
               }
               {isAdmin &&
-                  <>
                       <Tooltip title="Изменить роли">
                           <Button onClick={() => {
                             setIsModalOpen(true)
                             setCurrentRoles(record.roles)
+                            setEditingUserId(record.id)
                           }}
                                   style={{
                                     width: '32px',
@@ -308,35 +309,6 @@ const UsersPage: React.FC = () => {
                               <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
                           </Button>
                       </Tooltip>
-                      <Modal
-                          title="Добавьте или удалите роли и подтвердите действие"
-                          open={isModalOpen}
-                          onOk={() => editRolesConfirm(record.id, {roles: currentRoles})}
-                          onCancel={() => setIsModalOpen(false)}
-                          okButtonProps={{disabled: currentRoles.length === 0}}
-                      >
-                          <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-                              <Select
-                                  mode="multiple"
-                                  allowClear
-                                  style={{width: '100%'}}
-                                  placeholder="Пожалуйста, добавьте роль"
-                                  value={currentRoles}
-                                  onChange={saveCurrentRoles}
-                                  status={currentRoles.length === 0 ? 'error' : ''}
-                                  options={[
-                                    {value: 'ADMIN', label: 'ADMIN'},
-                                    {value: 'MODERATOR', label: 'MODERATOR'},
-                                    {value: 'USER', label: 'USER'},
-                                  ]}
-                              />
-                            {currentRoles.length === 0 && (
-                              <span
-                                style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
-                            )}
-                          </div>
-                      </Modal>
-                  </>
               }
               {!record.isBlocked ?
                 <Popconfirm
@@ -379,6 +351,34 @@ const UsersPage: React.FC = () => {
           )}
         />
       </Table>
+      <Modal
+        title="Добавьте или удалите роли и подтвердите действие"
+        open={isModalOpen}
+        onOk={() => editRolesConfirm(editingUserId, {roles: currentRoles})}
+        onCancel={() => setIsModalOpen(false)}
+        okButtonProps={{disabled: currentRoles.length === 0}}
+      >
+        <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{width: '100%'}}
+            placeholder="Пожалуйста, добавьте роль"
+            value={currentRoles}
+            onChange={saveCurrentRoles}
+            status={currentRoles.length === 0 ? 'error' : ''}
+            options={[
+              {value: 'ADMIN', label: 'ADMIN'},
+              {value: 'MODERATOR', label: 'MODERATOR'},
+              {value: 'USER', label: 'USER'},
+            ]}
+          />
+          {currentRoles.length === 0 && (
+            <span
+              style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
+          )}
+        </div>
+      </Modal>
     </>
   )
 }

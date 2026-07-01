@@ -1,6 +1,7 @@
 import apiClient from "@/api/apiClient";
 import {handleErrorTodo} from "@/api/apiError"
 import {MetaResponse, Todo, TodoInfo, TodoRequest, TodoStatus} from "@/types/todo";
+import axios, {AxiosRequestConfig} from "axios";
 
 const addNewTodo = async (title: string): Promise<void> => {
   try {
@@ -29,12 +30,13 @@ const deleteTodo = async (id: number): Promise<void> => {
   }
 }
 
-const getTodosData = async (tasksFilter: TodoStatus): Promise<MetaResponse<Todo, TodoInfo>> => {
+const getTodosData = async (tasksFilter: TodoStatus, config?: AxiosRequestConfig): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
-    const { data } = await apiClient.get('todos', {params: {filter: tasksFilter}})
+    const { data } = await apiClient.get('todos', {params: {filter: tasksFilter}, ...config})
     return data
   } catch (error: unknown) {
-   return handleErrorTodo(error);
+    if (axios.isCancel(error)) throw error;
+    return handleErrorTodo(error);
   }
 }
 

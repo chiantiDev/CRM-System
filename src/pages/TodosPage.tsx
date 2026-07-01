@@ -5,7 +5,7 @@ import todoApi from '@/api/todoApi'
 import AddNewTodo from "@/components/AddNewTodo";
 import MenuFilterTodo from "@/components/MenuFilterTodo";
 import TodoList from "@/components/TodoList";
-
+import axios from "axios";
 
 const TodosPage: FC = () => {
   const [todoStatus, setTodoStatus] = useState<TodoStatus>('all');
@@ -21,23 +21,26 @@ const TodosPage: FC = () => {
     todoStatusRef.current = todoStatus;
   }, [todoStatus]);
 
-  const loadTodoList = useCallback(async (): Promise<void> => {
+  const loadTodoList = useCallback(async (signal?: AbortSignal): Promise<void> => {
     try {
-      const data = await todoApi.getTodosData(todoStatusRef.current);
+      const data = await todoApi.getTodosData(todoStatusRef.current, { signal });
       setTodosData(data);
     } catch (error: unknown) {
-      messageApi.open({
-        type: 'error',
-        content: `${error}`,
-      })
+      if (axios.isCancel(error)) return;
+      await messageApi.error('Ошибка загрузки списка дел')
     }
   }, []);
 
   useEffect(() => {
-    void loadTodoList();
+    const controller = new AbortController();
+    void loadTodoList(controller.signal);
     const timerTodos = setInterval(() => {void loadTodoList()}, 5000);
-    return () => clearInterval(timerTodos);
+    return () => {
+      clearInterval(timerTodos);
+      controller.abort();
+    };
   }, [todoStatus, loadTodoList]);
+
 
   return (
     <>

@@ -21,7 +21,15 @@ export const getUser = createAppAsyncThunk<User, string, { rejectValue: ReturnTy
     } catch (error: unknown) {
       return rejectWithValue(handleErrorAuthentication(error));
     }
-  }
+  },
+  {
+    condition: (_, { getState }) => {
+      const fetchStatus = getState().user.user.status
+      if (fetchStatus === 'pending') {
+        return false
+      }
+    },
+  },
 );
 
 export const updateUser = createAppAsyncThunk<User, UpdateUserProps, { rejectValue: ReturnType<typeof handleErrorAuthentication> }>(

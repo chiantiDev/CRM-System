@@ -11,12 +11,12 @@ import {initialStateAuthorization} from "@/store/initialState/authorization/init
 
 export const checkAuthSession = createAppAsyncThunk<Token, void, { rejectValue: string }>(
   'authorization/checkAuthSession',
-  async (_, { rejectWithValue }) => {
+  async (_, {rejectWithValue}) => {
     const refreshTokenData = localStorage.getItem('refreshToken');
     if (!refreshTokenData) return rejectWithValue('Токен отсутствует');
     try {
-      const response = await authApiClient.post<Token, AxiosResponse<Token>, RefreshToken>('auth/refresh', { refreshToken: refreshTokenData });
-      const { accessToken, refreshToken } = response.data;
+      const response = await authApiClient.post<Token, AxiosResponse<Token>, RefreshToken>('auth/refresh', {refreshToken: refreshTokenData});
+      const {accessToken, refreshToken} = response.data;
       accessTokenStorage.setToken(accessToken);
       localStorage.setItem('refreshToken', refreshToken);
       return response.data;
@@ -25,7 +25,15 @@ export const checkAuthSession = createAppAsyncThunk<Token, void, { rejectValue: 
       accessTokenStorage.clearToken();
       return rejectWithValue(handleErrorAuthentication(error));
     }
-  }
+  },
+  {
+    condition: (_, { getState }) => {
+      const fetchStatus = getState().authorization.authorization.status
+      if (fetchStatus === 'pending') {
+        return false
+      }
+    },
+  },
 )
 
 export const loginUser = createAppAsyncThunk<Token, AuthData, { rejectValue: string }>(
@@ -48,7 +56,7 @@ const authorizationSlice = createSlice({
     logout: (state) => {
       localStorage.removeItem('refreshToken');
       accessTokenStorage.clearToken();
-      state.session = {
+      state.authorization = {
         data: null,
         error: 'Пользователь вышел из системы',
         errorCounter: 0,
@@ -57,7 +65,7 @@ const authorizationSlice = createSlice({
       state.login = initAsyncParticle<Token>();
     },
   }, extraReducers: (builder) => {
-    addAsyncBuilderCases(builder, checkAuthSession, (state) => state.session);
+    addAsyncBuilderCases(builder, checkAuthSession, (state) => state.authorization);
     addAsyncBuilderCases(builder, loginUser, (state) => state.login);
     builder
       .addCase(logoutUser.fulfilled, (state) => {
@@ -66,5 +74,5 @@ const authorizationSlice = createSlice({
   },
 })
 
-export const { logout } = authorizationSlice.actions;
+export const {logout} = authorizationSlice.actions;
 export default authorizationSlice.reducer;

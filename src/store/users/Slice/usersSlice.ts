@@ -23,7 +23,15 @@ export const getUsers = createAppAsyncThunk<MetaResponse<User>, UserFilters, { r
     } catch (error: unknown) {
       return rejectWithValue(handleErrorAuthentication(error));
     }
-  }
+  },
+  {
+    condition: (_, { getState }) => {
+      const fetchStatus = getState().users.users.status
+      if (fetchStatus === 'pending') {
+        return false
+      }
+    },
+  },
 );
 
 export const deleteUser = createAppAsyncThunk<void, number, { rejectValue: ReturnType<typeof handleErrorAuthentication> }>(

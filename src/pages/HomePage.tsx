@@ -8,35 +8,31 @@ import {getProfileUser} from "@/store/profile/Slices/profileSlice";
 import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
 
 const HomePage: React.FC = () => {
-  type MenuItem = Required<MenuProps>['items'][number];
-
-  const location = useLocation();
-  let currentKey = 'todo';
-  if (location.pathname.includes('/todo')) currentKey = 'todo';
-  if (location.pathname.includes('/profile')) currentKey = 'profile';
-  if (location.pathname.includes('/users') || location.pathname.includes('/user')) currentKey = 'users';
-
   const dispatch = useAppDispatch();
+  const location = useLocation();
+
   useEffect(() => {
     dispatch(getProfileUser())
   }, [dispatch]);
-  const { data: userData } = useAppSelector(selectProfileRequest);
-  const isAdminOrModer = userData?.roles.some((role) => role.toLowerCase() === 'admin' || role.toLowerCase() === 'moderator' ) ?? false;
 
+  const { data: userData } = useAppSelector(selectProfileRequest);
+  const isAdminOrModer = userData?.roles.some((role) => ['ADMIN', 'MODERATOR'].includes(role)) ?? false;
+
+  type MenuItem = Required<MenuProps>['items'][number];
   const menuItems: MenuItem[] = [
     {
-      key: 'todo',
+      key: '/todo',
       icon: <ScheduleOutlined />,
       label: <Link to="/todo">Список задач</Link>,
     },
     {
-      key: 'profile',
+      key: '/profile',
       icon: <ProfileOutlined />,
       label: <Link to="/profile">Личный кабинет</Link>,
     },
     isAdminOrModer ?
     {
-      key: 'users',
+      key: '/users',
       icon: <UserOutlined />,
       label: <Link to="/users">Пользователи</Link>,
     } : null,
@@ -47,7 +43,7 @@ const HomePage: React.FC = () => {
       <Sider theme="light" collapsible>
         <Menu
           mode="inline"
-          selectedKeys={[currentKey]}
+          selectedKeys={[location.pathname]}
           items={menuItems}
         />
       </Sider>
