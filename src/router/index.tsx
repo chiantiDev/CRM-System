@@ -6,7 +6,7 @@ import UsersPage from "@/pages/UsersPage";
 import UserPage from "@/pages/UserPage";
 import AuthorizationPage from "@/pages/AuthorizationPage";
 import RegistrationPage from "@/pages/RegistrationPage";
-import {GuestRoute, ProtectedRoute} from "@/router/ProtectedRoute";
+import {GuestRoute, ProtectedRoute, RoleProtectedRoute} from "@/router/ProtectedRoute";
 
 const routes = [
   {
@@ -39,12 +39,17 @@ const routes = [
             Component: ProfilePage,
           },
           {
-            path: "/users",
-            Component: UsersPage,
-          },
-          {
-            path: "/user/:id",
-            Component: UserPage,
+            element: <RoleProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']} />,
+            children: [
+              {
+                path: "/users",
+                Component: UsersPage,
+              },
+              {
+                path: "/user/:id",
+                Component: UserPage,
+              },
+            ]
           },
         ],
       },

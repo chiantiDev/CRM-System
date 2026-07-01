@@ -41,7 +41,7 @@ const UsersPage: React.FC = () => {
   const {isLoaded: isUnblockedUser} = useAppSelector(selectUnblockedUserStatus);
   const {isLoaded: isEditRolesUser} = useAppSelector(selectEditRolesUserStatus);
 
-  const isAdmin = userData?.roles.some((role) => role.toLowerCase() === 'admin') ?? false;
+  const isAdmin = userData?.roles.some((role) => ['ADMIN'].includes(role)) ?? false;
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortParams, setSortParams] = useState<{ field?: string; order?: 'asc' | 'desc' }>({});
@@ -271,44 +271,44 @@ const UsersPage: React.FC = () => {
                 </Tooltip>
               </Link>
               {isAdmin &&
-                  <Popconfirm
-                      title="Удалить?"
-                      description="Подтвердите действие"
-                      onConfirm={() => deleteUserConfirm(record.id)}
-                      okText="Подтвердить"
-                      cancelText="Отменить"
-                  >
-                      <Tooltip title="Удалить">
-                          <Button
-                              style={{
-                                width: '32px',
-                                height: '30px',
-                                padding: '0',
-                                border: 'none',
-                                borderRadius: '50%'
-                              }}>
-                              <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
-                          </Button>
-                      </Tooltip>
-                  </Popconfirm>
+                <Popconfirm
+                  title="Удалить?"
+                  description="Подтвердите действие"
+                  onConfirm={() => deleteUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Tooltip title="Удалить">
+                    <Button
+                      style={{
+                        width: '32px',
+                        height: '30px',
+                        padding: '0',
+                        border: 'none',
+                        borderRadius: '50%'
+                      }}>
+                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                </Popconfirm>
               }
               {isAdmin &&
-                      <Tooltip title="Изменить роли">
-                          <Button onClick={() => {
-                            setIsModalOpen(true)
-                            setCurrentRoles(record.roles)
-                            setEditingUserId(record.id)
-                          }}
-                                  style={{
-                                    width: '32px',
-                                    height: '30px',
-                                    padding: '0',
-                                    border: 'none',
-                                    borderRadius: '50%'
-                                  }}>
-                              <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
-                          </Button>
-                      </Tooltip>
+                <Tooltip title="Изменить роли">
+                  <Button onClick={() => {
+                    setIsModalOpen(true)
+                    setCurrentRoles(record.roles)
+                    setEditingUserId(record.id)
+                  }}
+                          style={{
+                            width: '32px',
+                            height: '30px',
+                            padding: '0',
+                            border: 'none',
+                            borderRadius: '50%'
+                          }}>
+                    <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
+                  </Button>
+                </Tooltip>
               }
               {!record.isBlocked ?
                 <Popconfirm
@@ -326,26 +326,26 @@ const UsersPage: React.FC = () => {
                   </Tooltip>
                 </Popconfirm> :
                 isAdmin &&
-                  <Popconfirm
-                      title="Разблокировать?"
-                      description="Подтвердите действие"
-                      onConfirm={() => unblockedUserConfirm(record.id)}
-                      okText="Подтвердить"
-                      cancelText="Отменить"
-                  >
-                      <Tooltip title="Разблокировать">
-                          <Button
-                              style={{
-                                width: '32px',
-                                height: '30px',
-                                padding: '0',
-                                border: 'none',
-                                borderRadius: '50%'
-                              }}>
-                              <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
-                          </Button>
-                      </Tooltip>
-                  </Popconfirm>
+                <Popconfirm
+                  title="Разблокировать?"
+                  description="Подтвердите действие"
+                  onConfirm={() => unblockedUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Tooltip title="Разблокировать">
+                    <Button
+                      style={{
+                        width: '32px',
+                        height: '30px',
+                        padding: '0',
+                        border: 'none',
+                        borderRadius: '50%'
+                      }}>
+                      <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
+                    </Button>
+                  </Tooltip>
+                </Popconfirm>
               }
             </Space>
           )}
