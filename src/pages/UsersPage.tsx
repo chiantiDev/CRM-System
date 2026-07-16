@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {Key, useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {blockedUser, deleteUser, editRolesUser, getUsers, unblockedUser} from "@/store/users/Slice/usersSlice";
 import {
@@ -25,7 +25,7 @@ import {
   Radio,
 } from "antd";
 import {UserOutlined, UserDeleteOutlined, StopOutlined, CheckCircleOutlined, EditOutlined} from "@ant-design/icons";
-import type {TableProps, TablePaginationConfig} from 'antd';
+import type {TableProps, TablePaginationConfig, RadioChangeEvent} from 'antd';
 import {Link} from "react-router";
 import {Roles, User, UserRolesRequest} from "@/types/users";
 import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
@@ -93,6 +93,28 @@ const UsersPage: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (
+    e: RadioChangeEvent,
+    setSelectedKeys: (selectedKeys: Key[]) => void
+  ) => {
+    const value = e.target.value;
+    setSelectedKeys(value ? [value] : []);
+    setCurrentPage(1);
+    switch (value) {
+      case 'all':
+        setIsBlocked(undefined);
+        break;
+      case 'active':
+        setIsBlocked(false);
+        break;
+      case 'blocked':
+        setIsBlocked(true);
+        break;
+      default:
+        break;
+    }
+  };
+
   const [messageApi, holder] = message.useMessage();
   const deleteUserConfirm = async (id: number): Promise<void> => {
     try {
@@ -102,6 +124,12 @@ const UsersPage: React.FC = () => {
       messageApi.error('Ошибка запроса удаления пользователя');
     }
   };
+
+  const openUserRoles = (record: User): void => {
+    setIsModalOpen(true)
+    setCurrentRoles(record.roles)
+    setEditingUserId(record.id)
+  }
 
   const blockedUserConfirm = async (id: number): Promise<void> => {
     try {
@@ -192,16 +220,7 @@ const UsersPage: React.FC = () => {
           title="Дата регистрации"
           dataIndex="date"
           key="date"
-          render={(text: string) => {
-            if (!text) return '-';
-            return new Date(text).toLocaleDateString('ru-RU', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-          }}
+          render={(text: string) => new Date(text).toLocaleDateString('ru-RU')}
         />
 
         <Table.Column<User>
@@ -213,16 +232,12 @@ const UsersPage: React.FC = () => {
             <div style={{padding: 12}}>
               <Radio.Group
                 value={selectedKeys[0] || 'all'}
-                onChange={(e) => {
-                  setSelectedKeys([e.target.value]);
-                  e.target.value === 'all' ? setIsBlocked(undefined) : e.target.value === 'blocked' ? setIsBlocked(true) : setIsBlocked(false);
-                  setCurrentPage(0)
-                }}
+                onChange={(e) => handleFilterChange(e, setSelectedKeys)}
                 style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
               >
                 <Radio value="all">Все пользователи</Radio>
-                <Radio value="blocked">Только заблокированные пользователи</Radio>
                 <Radio value="active">Только активные пользователи</Radio>
+                <Radio value="blocked">Только заблокированные пользователи</Radio>
               </Radio.Group>
             </div>
           )}
@@ -237,20 +252,9 @@ const UsersPage: React.FC = () => {
           title="Роли"
           dataIndex="roles"
           key="roles"
-          render={(roles: string[]) => (
+          render={(roles: Roles[]) => (
             <Flex gap="small" align="center" wrap>
-              {roles.map((role) => {
-                const ROLE_COLORS: Record<Roles, string> = {
-                  USER: 'cyan',
-                  ADMIN: 'gold',
-                  MODERATOR: 'purple',
-                };
-                return (
-                  <Tag color={ROLE_COLORS[role as Roles] || 'default'} key={role}>
-                    {role.toUpperCase()}
-                  </Tag>
-                );
-              })}
+              {roles.map((role) => <Tag key={role}>{role}</Tag>)}
             </Flex>
           )}
         />
@@ -294,11 +298,7 @@ const UsersPage: React.FC = () => {
               }
               {isAdmin &&
                 <Tooltip title="Изменить роли">
-                  <Button onClick={() => {
-                    setIsModalOpen(true)
-                    setCurrentRoles(record.roles)
-                    setEditingUserId(record.id)
-                  }}
+                  <Button onClick={() => openUserRoles(record)}
                           style={{
                             width: '32px',
                             height: '30px',
