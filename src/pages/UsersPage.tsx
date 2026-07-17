@@ -1,4 +1,4 @@
-import React, {Key, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {blockedUser, deleteUser, editRolesUser, getUsers, unblockedUser} from "@/store/users/Slice/usersSlice";
 import {
@@ -18,14 +18,24 @@ import {
   Space,
   Table,
   Tag,
-  Tooltip,
   Input,
   Modal,
   Select,
   Radio,
+  Typography,
+  Dropdown,
 } from "antd";
-import {UserOutlined, UserDeleteOutlined, StopOutlined, CheckCircleOutlined, EditOutlined} from "@ant-design/icons";
-import type {TableProps, TablePaginationConfig, RadioChangeEvent} from 'antd';
+
+const {Title, Text, Link: LinkText} = Typography;
+import {
+  UserOutlined,
+  SearchOutlined,
+  FilterOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  MoreOutlined
+} from "@ant-design/icons";
+import type {TableProps, TablePaginationConfig} from 'antd';
 import {Link} from "react-router";
 import {Roles, User, UserRolesRequest} from "@/types/users";
 import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
@@ -42,6 +52,7 @@ const UsersPage: React.FC = () => {
   const {isLoaded: isEditRolesUser} = useAppSelector(selectEditRolesUserStatus);
 
   const isAdmin = userData?.roles.some((role) => ['ADMIN'].includes(role)) ?? false;
+  const isModer = userData?.roles.some((role) => ['MODERATOR'].includes(role)) ?? false;
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortParams, setSortParams] = useState<{ field?: string; order?: 'asc' | 'desc' }>({});
@@ -78,7 +89,7 @@ const UsersPage: React.FC = () => {
     date: user.date,
     isBlocked: user.isBlocked,
     roles: user.roles,
-    phoneNumber: user.phoneNumber || 'Не указан',
+    phoneNumber: user.phoneNumber,
   })) : []
 
   const handleTableChange: TableProps<User>['onChange'] = (pagination, _filters, sorter) => {
@@ -93,12 +104,7 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (
-    e: RadioChangeEvent,
-    setSelectedKeys: (selectedKeys: Key[]) => void
-  ) => {
-    const value = e.target.value;
-    setSelectedKeys(value ? [value] : []);
+  const handleFilterChange = (value: string) => {
     setCurrentPage(1);
     switch (value) {
       case 'all':
@@ -109,8 +115,6 @@ const UsersPage: React.FC = () => {
         break;
       case 'blocked':
         setIsBlocked(true);
-        break;
-      default:
         break;
     }
   };
@@ -181,20 +185,43 @@ const UsersPage: React.FC = () => {
   return (
     <>
       {holder}
-      <Tooltip
-        placement={"bottomLeft"}
-        title="Поиск по имени или email">
+      <Flex align="center" style={{padding: '16px', gap: '16px'}}>
+        <Title style={{flex: 3, margin: 0}} level={3}>Пользователи</Title>
         <Input
-          prefix={<UserOutlined/>}
-          placeholder="Найти пользователя"
+          style={{flex: 1}}
+          prefix={<SearchOutlined/>}
+          placeholder="Поиск по имени или email"
           size="large"
           allowClear
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
         />
-      </Tooltip>
-
+        {isAdmin &&
+          <Dropdown menu={{
+            items: [
+              {
+                key: 'filter-group',
+                label: (
+                  <div style={{padding: 12}}>
+                    <Radio.Group
+                      defaultValue={'all'}
+                      onChange={(e) => handleFilterChange(e.target.value)}
+                      style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
+                    >
+                      <Radio value="all">Все пользователи</Radio>
+                      <Radio value="active">Только активные пользователи</Radio>
+                      <Radio value="blocked">Только заблокированные пользователи</Radio>
+                    </Radio.Group>
+                  </div>
+                ),
+              },
+            ]
+          }}>
+            <Button size="large"><FilterOutlined/>Фильтр</Button>
+          </Dropdown>
+        }
+      </Flex>
       <Table<User>
-        scroll={{y: 'calc(100vh - 160px)'}}
+        scroll={{y: 'calc(100vh - 192px)'}}
         dataSource={dataSource}
         rowKey={(record) => record.id}
         onChange={handleTableChange}
@@ -206,45 +233,50 @@ const UsersPage: React.FC = () => {
           dataIndex={'username'}
           key={'username'}
           sorter={true}
-          render={(text) => highlightedText(text, debouncedSearch)}/>
+          render={(value) => {
+            return (
+              <>
+                <Avatar size={"small"} style={{marginRight: 8}} icon={<UserOutlined/>}/>
+                <Text>{highlightedText(value, debouncedSearch)}</Text>
+              </>
+            )
+          }}/>
 
         <Table.Column<User>
           title="Email пользователя"
           dataIndex="email"
           key="email"
           sorter={true}
-          render={(text) => highlightedText(text, debouncedSearch)}
+          render={(value) =>
+            <>
+              <MailOutlined style={{marginRight: 8}}/>
+              <LinkText href={`mailto:${value}`} underline>
+                {highlightedText(value, debouncedSearch)}
+              </LinkText>
+            </>
+          }
         />
 
         <Table.Column<User>
-          title="Дата регистрации"
-          dataIndex="date"
-          key="date"
-          render={(text: string) => new Date(text).toLocaleDateString('ru-RU')}
-        />
-
-        <Table.Column<User>
-          title="Статус блокировки"
-          dataIndex="isBlocked"
-          key="isBlocked"
-          filterIcon={isAdmin ? undefined : () => null}
-          filterDropdown={({setSelectedKeys, selectedKeys}) => (
-            <div style={{padding: 12}}>
-              <Radio.Group
-                value={selectedKeys[0] || 'all'}
-                onChange={(e) => handleFilterChange(e, setSelectedKeys)}
-                style={{display: 'flex', flexDirection: 'column', gap: '8px'}}
-              >
-                <Radio value="all">Все пользователи</Radio>
-                <Radio value="active">Только активные пользователи</Radio>
-                <Radio value="blocked">Только заблокированные пользователи</Radio>
-              </Radio.Group>
-            </div>
-          )}
-          render={(status: boolean) => {
-            const statusText = status ? 'blocked' : 'active';
-            const color = status ? 'red' : 'green';
-            return <Tag color={color}>{statusText.toUpperCase()}</Tag>;
+          title="Номер телефона"
+          dataIndex="phoneNumber"
+          key="phoneNumber"
+          render={(value) => {
+            if (!value) {
+              return (
+                <>
+                  <PhoneOutlined style={{marginRight: 8}}/>
+                  <Text>Не указан</Text>
+                </>
+              )
+            } else {
+              return (
+                <>
+                  <PhoneOutlined style={{marginRight: 8}}/>
+                  <LinkText href={`tel:${value}`}>{value}</LinkText>
+                </>
+              )
+            }
           }}
         />
 
@@ -260,9 +292,18 @@ const UsersPage: React.FC = () => {
         />
 
         <Table.Column<User>
-          title="Номер телефона"
-          dataIndex="phoneNumber"
-          key="phoneNumber"/>
+          title="Статус блокировки"
+          dataIndex="isBlocked"
+          key="isBlocked"
+          render={(value) => value ? '+' : '-'}
+        />
+
+        <Table.Column<User>
+          title="Дата регистрации"
+          dataIndex="date"
+          key="date"
+          render={(text: string) => new Date(text).toLocaleDateString('ru-RU')}
+        />
 
         <Table.Column<User>
           title="Действия"
@@ -270,47 +311,9 @@ const UsersPage: React.FC = () => {
           render={(_, record) => (
             <Space>
               <Link to={`/user/${record.id}`}>
-                <Tooltip title="Профиль">
-                  <Avatar style={{backgroundColor: '#7f265c'}} icon={<UserOutlined/>}/>
-                </Tooltip>
+                <Button>Профиль</Button>
               </Link>
-              {isAdmin &&
-                <Popconfirm
-                  title="Удалить?"
-                  description="Подтвердите действие"
-                  onConfirm={() => deleteUserConfirm(record.id)}
-                  okText="Подтвердить"
-                  cancelText="Отменить"
-                >
-                  <Tooltip title="Удалить">
-                    <Button
-                      style={{
-                        width: '32px',
-                        height: '30px',
-                        padding: '0',
-                        border: 'none',
-                        borderRadius: '50%'
-                      }}>
-                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<UserDeleteOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                </Popconfirm>
-              }
-              {isAdmin &&
-                <Tooltip title="Изменить роли">
-                  <Button onClick={() => openUserRoles(record)}
-                          style={{
-                            width: '32px',
-                            height: '30px',
-                            padding: '0',
-                            border: 'none',
-                            borderRadius: '50%'
-                          }}>
-                    <Avatar style={{backgroundColor: '#7f265c'}} icon={<EditOutlined/>}/>
-                  </Button>
-                </Tooltip>
-              }
-              {!record.isBlocked ?
+              {isModer && !isAdmin && !record.isBlocked &&
                 <Popconfirm
                   title="Заблокировать?"
                   description="Подтвердите действие"
@@ -318,34 +321,57 @@ const UsersPage: React.FC = () => {
                   okText="Подтвердить"
                   cancelText="Отменить"
                 >
-                  <Tooltip title="Заблокировать">
-                    <Button
-                      style={{width: '32px', height: '30px', padding: '0', border: 'none', borderRadius: '50%'}}>
-                      <Avatar style={{backgroundColor: '#e4464e'}} icon={<StopOutlined/>}/>
-                    </Button>
-                  </Tooltip>
-                </Popconfirm> :
-                isAdmin &&
-                <Popconfirm
-                  title="Разблокировать?"
-                  description="Подтвердите действие"
-                  onConfirm={() => unblockedUserConfirm(record.id)}
-                  okText="Подтвердить"
-                  cancelText="Отменить"
-                >
-                  <Tooltip title="Разблокировать">
-                    <Button
-                      style={{
-                        width: '32px',
-                        height: '30px',
-                        padding: '0',
-                        border: 'none',
-                        borderRadius: '50%'
-                      }}>
-                      <Avatar style={{backgroundColor: '#6eae54'}} icon={<CheckCircleOutlined/>}/>
-                    </Button>
-                  </Tooltip>
+                  <Button>Заблокировать</Button>
                 </Popconfirm>
+              }
+              {isAdmin &&
+                <Dropdown trigger={["click"]} menu={{
+                  items: [
+                    {
+                      key: 'actions-group',
+                      label: (
+                        <Flex vertical gap="small">
+                          {!record.isBlocked
+                            ?
+                            <Popconfirm
+                              title="Заблокировать?"
+                              description="Подтвердите действие"
+                              onConfirm={() => blockedUserConfirm(record.id)}
+                              okText="Подтвердить"
+                              cancelText="Отменить"
+                            >
+                              <Button>Заблокировать</Button>
+                            </Popconfirm>
+                            :
+                            <Popconfirm
+                              title="Разблокировать?"
+                              description="Подтвердите действие"
+                              onConfirm={() => unblockedUserConfirm(record.id)}
+                              okText="Подтвердить"
+                              cancelText="Отменить"
+                            >
+                              <Button>Разблокировать</Button>
+                            </Popconfirm>
+                          }
+                          <>
+                            <Button onClick={() => openUserRoles(record)}>Изменить роли</Button>
+                            <Popconfirm
+                              title="Удалить?"
+                              description="Подтвердите действие"
+                              onConfirm={() => deleteUserConfirm(record.id)}
+                              okText="Подтвердить"
+                              cancelText="Отменить"
+                            >
+                              <Button>Удалить</Button>
+                            </Popconfirm>
+                          </>
+                        </Flex>
+                      ),
+                    },
+                  ]
+                }}>
+                  <Button><MoreOutlined/></Button>
+                </Dropdown>
               }
             </Space>
           )}
@@ -354,30 +380,37 @@ const UsersPage: React.FC = () => {
       <Modal
         title="Добавьте или удалите роли и подтвердите действие"
         open={isModalOpen}
-        onOk={() => editRolesConfirm(editingUserId, {roles: currentRoles})}
+        footer={null}
         onCancel={() => setIsModalOpen(false)}
         okButtonProps={{disabled: currentRoles.length === 0}}
       >
-        <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
-          <Select
-            mode="multiple"
-            allowClear
-            style={{width: '100%'}}
-            placeholder="Пожалуйста, добавьте роль"
-            value={currentRoles}
-            onChange={saveCurrentRoles}
-            status={currentRoles.length === 0 ? 'error' : ''}
-            options={[
-              {value: 'ADMIN', label: 'ADMIN'},
-              {value: 'MODERATOR', label: 'MODERATOR'},
-              {value: 'USER', label: 'USER'},
-            ]}
-          />
-          {currentRoles.length === 0 && (
-            <span
-              style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
-          )}
-        </div>
+        <Flex gap="small" align="start">
+          <Flex flex={1} vertical gap="small">
+            <Select
+              mode="multiple"
+              allowClear
+              placeholder="Пожалуйста, добавьте роль"
+              value={currentRoles}
+              onChange={saveCurrentRoles}
+              status={currentRoles.length === 0 ? 'error' : ''}
+              options={[
+                {value: 'ADMIN', label: 'ADMIN'},
+                {value: 'MODERATOR', label: 'MODERATOR'},
+                {value: 'USER', label: 'USER'},
+              ]}
+            />
+            {currentRoles.length === 0 && (
+              <span
+                style={{color: '#ff4d4f', fontSize: '12px'}}>Необходимо выбрать минимум одну роль</span>
+            )}
+          </Flex>
+          <Space>
+            <Button disabled={currentRoles.length === 0}
+                    onClick={() => editRolesConfirm(editingUserId, {roles: currentRoles})} type="primary">
+              ОК
+            </Button>
+          </Space>
+        </Flex>
       </Modal>
     </>
   )
