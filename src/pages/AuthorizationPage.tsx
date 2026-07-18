@@ -3,12 +3,11 @@ import {Link} from "react-router";
 import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {loginUser} from "@/store/authorization/Slices/authorizationSlice";
 import {Button, Checkbox, Col, Form, Input, message, Row, Typography} from "antd";
+const { Title, Text } = Typography;
 import {loginRules, passwordRules} from "@/helpers/validation/registrationRules";
 import bg from '@/accets/auth-bg.jpg'
 import icon from '@/accets/iconLogin.jpg'
-import {selectAuthSessionStatus} from "@/Modules/authorization/selectors";
-
-const { Title, Text } = Typography;
+import {selectAuthSessionStatus} from "@/Modules/authorization/authorizationSelectors.ts";
 
 interface authorizationFormValues {
   login: string;
@@ -30,8 +29,8 @@ const AuthorizationPage: React.FC = () => {
     }
   };
 
-  const onFinishFailed = () => {
-    message.error('Пожалуйста, исправьте ошибки в форме');
+  const onFinishFailed = async () => {
+   await message.error('Пожалуйста, исправьте ошибки в форме');
   };
 
   return (

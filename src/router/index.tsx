@@ -2,16 +2,18 @@ import {createBrowserRouter, Navigate} from "react-router";
 import HomePage from "@/pages/HomePage";
 import TodosPage from "@/pages/TodosPage";
 import ProfilePage from "@/pages/ProfilePage";
+import UsersPage from "@/pages/UsersPage";
+import UserPage from "@/pages/UserPage";
 import AuthorizationPage from "@/pages/AuthorizationPage";
 import RegistrationPage from "@/pages/RegistrationPage";
-import {GuestRoute, ProtectedRoute} from "@/router/ProtectedRoute";
+import {GuestRoute, ProtectedRoute, RoleProtectedRoute} from "@/router/ProtectedRoute";
 
 const routes = [
   {
     Component: GuestRoute,
     children: [
       {
-        path: "/",
+        path: "/login",
         Component: AuthorizationPage,
       },
       {
@@ -24,17 +26,30 @@ const routes = [
     Component: ProtectedRoute,
     children: [
       {
-        path: "/home",
+        path: "/",
         Component: HomePage,
         children: [
-          {index: true, Component: () => <Navigate to="todo" replace/>},
+          {index: true, Component: () => <Navigate to="/todo" replace/>},
           {
-            path: "todo",
+            path: "/todo",
             Component: TodosPage,
           },
           {
-            path: "profile",
+            path: "/profile",
             Component: ProfilePage,
+          },
+          {
+            element: <RoleProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']} />,
+            children: [
+              {
+                path: "/users",
+                Component: UsersPage,
+              },
+              {
+                path: "/user/:id",
+                Component: UserPage,
+              },
+            ]
           },
         ],
       },

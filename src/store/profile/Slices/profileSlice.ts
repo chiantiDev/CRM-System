@@ -4,7 +4,7 @@ import apiClient from "@/api/apiClient";
 import {Profile} from "@/types/auth"
 import {handleErrorAuthentication} from "@/api/apiError"
 import {AxiosResponse} from "axios";
-import {initialState} from "@/store/initialState/initialStateProfile/initialStateProfile";
+import {initialState} from "@/store/initialState/profile/initialStateProfile";
 import {addAsyncBuilderCases} from "@/store/utils";
 
 export const getProfileUser = createAppAsyncThunk<Profile, void>(
@@ -16,7 +16,15 @@ export const getProfileUser = createAppAsyncThunk<Profile, void>(
     } catch (error: unknown) {
       return rejectWithValue(handleErrorAuthentication(error));
     }
-  }
+  },
+  {
+    condition: (_, { getState }) => {
+      const fetchStatus = getState().profile.profile.status
+      if (fetchStatus === 'pending') {
+        return false
+      }
+    },
+  },
 );
 
 export const logoutUser = createAppAsyncThunk<void>(

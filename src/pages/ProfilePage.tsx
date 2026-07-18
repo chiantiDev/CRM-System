@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "@/hook/hook";
 import {getProfileUser, logoutUser} from "@/store/profile/Slices/profileSlice";
 import {Button, Card, Space, Typography} from "antd";
-import {selectProfileRequest, selectProfileStatus} from "@/Modules/profile/selectors";
+import {selectProfileRequest, selectProfileStatus} from "@/Modules/profile/profileSelectors.ts";
 
 const { Title, Text } = Typography;
 

@@ -12,7 +12,7 @@ import {
   phoneNumberRules,
   userNameRules,
 } from '@/helpers/validation/registrationRules';
-import {selectRegistrationStatus} from "@/Modules/registration/selectors";
+import {selectRegistrationStatus} from "@/Modules/registration/registrationSelectors.ts";
 
 const { Text } = Typography;
 
@@ -46,13 +46,13 @@ const RegistrationPage: React.FC = () => {
       });
     } catch (error: unknown) {
       if (typeof error === 'string') {
-        message.error(error);
+        await message.error(error);
       }
     }
   };
 
-  const onFinishFailed = () => {
-    message.error('Пожалуйста, исправьте ошибки в форме');
+  const onFinishFailed = async () => {
+   await message.error('Пожалуйста, исправьте ошибки в форме');
   };
 
   return (
