@@ -9,37 +9,39 @@ import {
   selectUsersRequest,
   selectUsersStatus
 } from "@/Modules/users/usersSelectors.ts";
+import type {TablePaginationConfig, TableProps} from 'antd';
 import {
   Avatar,
   Button,
+  Dropdown,
   Flex,
+  Input,
   message,
+  Modal,
   Popconfirm,
+  Radio,
+  Select,
   Space,
   Table,
   Tag,
-  Input,
-  Modal,
-  Select,
-  Radio,
+  Tooltip,
   Typography,
-  Dropdown,
 } from "antd";
-
 const {Title, Text, Link: LinkText} = Typography;
 import {
-  UserOutlined,
-  SearchOutlined,
+  ArrowRightOutlined,
   FilterOutlined,
   MailOutlined,
+  MoreOutlined,
   PhoneOutlined,
-  MoreOutlined
+  SearchOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import type {TableProps, TablePaginationConfig} from 'antd';
 import {Link} from "react-router";
 import {Roles, User, UserRolesRequest} from "@/types/users";
-import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
 import {highlightedText} from "@/helpers/highlightedText.tsx";
+import {hasRole} from "@/helpers/hasRole.ts";
+import {selectProfileRequest} from "@/Modules/profile/profileSelectors.ts";
 
 const UsersPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -50,9 +52,6 @@ const UsersPage: React.FC = () => {
   const {isLoaded: isBlockedUser} = useAppSelector(selectBlockedUserStatus);
   const {isLoaded: isUnblockedUser} = useAppSelector(selectUnblockedUserStatus);
   const {isLoaded: isEditRolesUser} = useAppSelector(selectEditRolesUserStatus);
-
-  const isAdmin = userData?.roles.some((role) => ['ADMIN'].includes(role)) ?? false;
-  const isModer = userData?.roles.some((role) => ['MODERATOR'].includes(role)) ?? false;
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortParams, setSortParams] = useState<{ field?: string; order?: 'asc' | 'desc' }>({});
@@ -195,7 +194,7 @@ const UsersPage: React.FC = () => {
           allowClear
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
         />
-        {isAdmin &&
+        { hasRole(userData?.roles, [Roles.ADMIN]) &&
           <Dropdown menu={{
             items: [
               {
@@ -310,10 +309,8 @@ const UsersPage: React.FC = () => {
           key="actions"
           render={(_, record) => (
             <Space>
-              <Link to={`/user/${record.id}`}>
-                <Button>Профиль</Button>
-              </Link>
-              {isModer && !isAdmin && !record.isBlocked &&
+              {!record.isBlocked
+                ? hasRole(userData?.roles, [Roles.ADMIN, Roles.MODERATOR]) &&
                 <Popconfirm
                   title="Заблокировать?"
                   description="Подтвердите действие"
@@ -321,39 +318,32 @@ const UsersPage: React.FC = () => {
                   okText="Подтвердить"
                   cancelText="Отменить"
                 >
-                  <Button>Заблокировать</Button>
+                  <Button size={"small"}>Заблокировать</Button>
+                </Popconfirm>
+                : hasRole(userData?.roles, [Roles.ADMIN]) &&
+                <Popconfirm
+                  title="Разблокировать?"
+                  description="Подтвердите действие"
+                  onConfirm={() => unblockedUserConfirm(record.id)}
+                  okText="Подтвердить"
+                  cancelText="Отменить"
+                >
+                  <Button size={"small"}>Разблокировать</Button>
                 </Popconfirm>
               }
-              {isAdmin &&
+              <Tooltip title="Профиль">
+                <Link to={`/user/${record.id}`}>
+                  <Button size={"small"}><ArrowRightOutlined /></Button>
+                </Link>
+              </Tooltip>
+              { hasRole(userData?.roles, [Roles.ADMIN]) &&
+                <Tooltip title="Действия">
                 <Dropdown trigger={["click"]} menu={{
                   items: [
                     {
                       key: 'actions-group',
                       label: (
                         <Flex vertical gap="small">
-                          {!record.isBlocked
-                            ?
-                            <Popconfirm
-                              title="Заблокировать?"
-                              description="Подтвердите действие"
-                              onConfirm={() => blockedUserConfirm(record.id)}
-                              okText="Подтвердить"
-                              cancelText="Отменить"
-                            >
-                              <Button>Заблокировать</Button>
-                            </Popconfirm>
-                            :
-                            <Popconfirm
-                              title="Разблокировать?"
-                              description="Подтвердите действие"
-                              onConfirm={() => unblockedUserConfirm(record.id)}
-                              okText="Подтвердить"
-                              cancelText="Отменить"
-                            >
-                              <Button>Разблокировать</Button>
-                            </Popconfirm>
-                          }
-                          <>
                             <Button onClick={() => openUserRoles(record)}>Изменить роли</Button>
                             <Popconfirm
                               title="Удалить?"
@@ -364,14 +354,14 @@ const UsersPage: React.FC = () => {
                             >
                               <Button>Удалить</Button>
                             </Popconfirm>
-                          </>
                         </Flex>
                       ),
                     },
                   ]
                 }}>
-                  <Button><MoreOutlined/></Button>
+                  <Button size={"small"}><MoreOutlined/></Button>
                 </Dropdown>
+                </Tooltip>
               }
             </Space>
           )}
